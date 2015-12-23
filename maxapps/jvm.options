@@ -1,0 +1,4 @@
+-Xms2048m
+-Xmx2048m
+-Xgcpolicy:gencon
+-Xmn320m

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Maximo Application Server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>jsp-2.2</feature>
+
+        <!-- JMS Function -->
+        <feature>wasJmsServer-1.0</feature>
+        <feature>jndi-1.0</feature>
+        <feature>wasJmsClient-1.1</feature>
+        <feature>jmsMdb-3.1</feature>
+
+        <feature>appSecurity-2.0</feature>
+        <feature>webProfile-6.0</feature>
+        <feature>servlet-3.0</feature>
+        <feature>managedBeans-1.0</feature>
+        <feature>ejbLite-3.1</feature>
+
+        <feature>jaxrs-1.1</feature>
+        <feature>wab-1.0</feature>
+        <feature>jaxws-2.2</feature>
+        <feature>javaMail-1.5</feature>
+    </featureManager>
+
+    <webContainer deferServletLoad="false"/>
+    <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="localhost"
+                  httpPort="9080"
+                  httpsPort="9443" />
+
+    <messagingEngine>
+        <queue id="sqin"/>
+        <queue id="sqout"/>
+        <queue id="cqin"/>
+        <queue id="cqinerr"/>
+    </messagingEngine>
+
+    <jmsQueue id="sqin" jndiName="jms/maximo/int/queues/sqin">
+       <properties.wasJms queueName="sqin"/>
+    </jmsQueue>  
+
+    <jmsQueue id="sqout" jndiName="jms/maximo/int/queues/sqout">
+       <properties.wasJms queueName="sqout"/>
+    </jmsQueue>  
+
+    <jmsQueue id="cqin" jndiName="jms/maximo/int/queues/cqin">
+      <properties.wasJms queueName="cqin"/>
+    </jmsQueue>  
+
+    <jmsQueue id="cqinerr" jndiName="jms/maximo/int/queues/cqinerr">
+      <properties.wasJms queueName="cqinerr"/>
+    </jmsQueue>
+
+    <connectionManager id="ConnectionMgr1"/>
+
+    <jmsQueueConnectionFactory id="intjmsconfact" connectionManagerRef="ConnectionMgr1"
+               jndiName="intjmsconfact">
+      <properties.wasJms/>
+    </jmsQueueConnectionFactory>  
+
+   <connectionManager id="ConnectionMgr1"/>
+
+   <jmsActivationSpec id="maximo/mboejb/JMSContQueueProcessor-1">
+      <properties.wasJms destinationRef="cqin" />
+   </jmsActivationSpec>       
+
+   <jmsActivationSpec id="maximo/mboejb/JMSContQueueProcessor-2">
+      <properties.wasJms destinationRef="cqinerr" />
+   </jmsActivationSpec>
+
+   <application id="maximo" type="ear" location="maximo.ear" name="maximo">
+        <security-role name="maximouser">
+            <special-subject type="ALL_AUTHENTICATED_USERS"/>
+        </security-role>
+    </application>
+
+</server>
