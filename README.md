@@ -1,8 +1,12 @@
 # Building and deploying an IBM Maximo Asset Management V7.6 with Feature Pack image
+====================================================================================
 
-The following instructions can be used to build an IBM Maximo Asset Management image for V7.6.
+The following instructions can be used to build an IBM Maximo Asset Management image for V7.6. This images consist of several components e.g. WebSphere, DB2, and Maximo installation program.
+
+![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.png)
 
 ## Required packages
+--------------------
 
 * IBM Installation Manager binaries from [Installation Manager 1.8 download documents](http://www-01.ibm.com/support/docview.wss?uid=swg24037640)
 
@@ -50,6 +54,7 @@ The following instructions can be used to build an IBM Maximo Asset Management i
   * v10.5fp7_linuxx64_server_t.tar.gz
 
 ## Building the IBM Maximo Asset Management V7.6 image
+------------------------------------------------------
 
 Prereq: all binaries should be accessible via a web server during building phase.
 
@@ -100,8 +105,10 @@ Prereq: all binaries should be accessible via a web server during building phase
     docker build -t maximo/maximo:7.6.0.7 -t maximo/maximo:latest \
     --network build maximo
     ```
+    Note: If the build has failed during Maximo Feature Pack installation, run the docker build again.
 7. Run containers by using the Docker Compose file to create and deploy instances:
     ```bash
     docker-compose run -d
     ```
-8. Make sure to be accessible to Maximo login page: http://<hostname>/maximo
+    Note: It will take 3-4 hours (depend on your machine) to complete the installation.
+8. Make sure to be accessible to Maximo login page: http://hostname/maximo
