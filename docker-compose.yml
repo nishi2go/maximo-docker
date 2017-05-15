@@ -1,0 +1,54 @@
+version: '3'
+services:
+  maxdb:
+    image: maximo/db2
+    hostname: maxdb
+    networks:
+    - maxnet
+    privileged: true
+    volumes:
+    - maxdb76:/home/ctginst1
+    - vardb2:/var/db2
+  maxdmgr:
+    image: maximo/maxdmgr
+    hostname: maxdmgr
+    ports:
+    - 9043:9043
+    networks:
+    - maxnet
+  maxapps:
+    image: maximo/maxapps
+    hostname: maxapps
+    networks:
+    - maximo
+    depends_on:
+      - maxdmgr
+      - maxweb
+    networks:
+    - maxnet
+  maxweb:
+    image: maximo/maxweb
+    hostname: maxweb
+    ports:
+    - 80:80
+    depends_on:
+      - maxdmgr
+    networks:
+    - maxnet
+  maximo:
+    image: maximo/maximo
+    hostname: maximo
+    networks:
+    - maximo
+    depends_on:
+     - maxdb
+     - maxapps
+     - maxweb
+    networks:
+    - maxnet
+networks:
+  maxnet: 
+volumes:
+  maxdb76: 
+  vardb2:
+  pae76: 

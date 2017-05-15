@@ -1,67 +1,89 @@
-# (C) Copyright IBM Corporation 2015.
-# (C) Copyright Yasutaka Nishimura 2015.
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM ibmcom/db2express-c
+FROM centos:7
 
-RUN su - db2inst1 -c "db2start && db2 create db 'maxdb76' ALIAS 'maxdb76' using codeset UTF-8 territory US pagesize 32 K"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using SELF_TUNING_MEM ON"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using APPGROUP_MEM_SZ 16384 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using APPLHEAPSZ 2048 AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using AUTO_MAINT ON DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using AUTO_TBL_MAINT ON DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using AUTO_RUNSTATS ON DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using AUTO_REORG ON DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using AUTO_DB_BACKUP ON DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using CATALOGCACHE_SZ 800 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using CHNGPGS_THRESH 40 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using DBHEAP AUTOMATIC"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using MAXLOCKS AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using LOCKLIST AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using LOGBUFSZ 1024 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using LOCKTIMEOUT 300 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using LOGPRIMARY 20 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using LOGSECOND 100 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using LOGFILSIZ 8192 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using SOFTMAX 1000 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using MAXFILOP 61440 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using PCKCACHESZ AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using STAT_HEAP_SZ AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using STMTHEAP AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using UTIL_HEAP_SZ 10000 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using DATABASE_MEMORY AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using AUTO_STMT_STATS OFF DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update db cfg for maxdb76 using STMT_CONC LITERALS DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update alert cfg for database on maxdb76 using db.db_backup_req SET THRESHOLDSCHECKED YES"
-RUN su - db2inst1 -c "db2start && db2 update alert cfg for database on maxdb76 using db.tb_reorg_req SET THRESHOLDSCHECKED YES"
-RUN su - db2inst1 -c "db2start && db2 update alert cfg for database on maxdb76 using db.tb_runstats_req SET THRESHOLDSCHECKED YES"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using PRIV_MEM_THRESH 32767 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using KEEPFENCED NO DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using NUMDB 2 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using RQRIOBLK 65535 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using HEALTH_MON OFF DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using AGENT_STACK_SZ 1000 DEFERRED"
-RUN su - db2inst1 -c "db2start && db2 update dbm cfg using MON_HEAP_SZ AUTOMATIC DEFERRED"
-RUN su - db2inst1 -c "db2set DB2_SKIPINSERTED=ON"
-RUN su - db2inst1 -c "db2set DB2_INLIST_TO_NLJN=YES"
-RUN su - db2inst1 -c "db2set DB2_MINIMIZE_LISTPREFETCH=Y"
-RUN su - db2inst1 -c "db2set DB2_EVALUNCOMMITTED=YES"
-RUN su - db2inst1 -c "db2set DB2_FMP_COMM_HEAPSZ=65536"
-RUN su - db2inst1 -c "db2set DB2_SKIPDELETED=ON"
-RUN su - db2inst1 -c "db2set DB2_USE_ALTERNATE_PAGE_CLEANING=ON"
+MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
-RUN su - db2inst1 -c "db2start && db2 connect to 'maxdb76' && db2 CREATE BUFFERPOOL MAXBUFPOOL IMMEDIATE SIZE 4096 AUTOMATIC PAGESIZE 32 K && db2 connect reset"
-RUN su - db2inst1 -c "db2start && db2 connect to 'maxdb76' && db2 CREATE REGULAR TABLESPACE MAXDATA PAGESIZE 32 K MANAGED BY AUTOMATIC STORAGE INITIALSIZE 5000 M BUFFERPOOL MAXBUFPOOL && db2 connect reset"
-RUN su - db2inst1 -c "db2start && db2 connect to 'maxdb76' && db2 CREATE TEMPORARY TABLESPACE MAXTEMP PAGESIZE 32 K MANAGED BY AUTOMATIC STORAGE BUFFERPOOL MAXBUFPOOL && db2 connect reset"
-RUN su - db2inst1 -c "db2start && db2 connect to 'maxdb76' && db2 CREATE REGULAR TABLESPACE MAXINDEX PAGESIZE 32 K MANAGED BY AUTOMATIC STORAGE INITIALSIZE 5000 M BUFFERPOOL MAXBUFPOOL && db2 connect reset"
-RUN su - db2inst1 -c "db2start && db2 connect to 'maxdb76' && db2 create schema maximo authorization maximo && db2 connect reset"
+ARG url=http://images
+
+ARG fp=7
+
+## Install required software
+RUN yum update -y && yum install -y wget unzip tar nc bc net-tools bind-utils \
+    passwd pam pam.i686 ncurses-libs.i686 file libaio compat-libstdc++-33 compat-libstdc++-33.i686 && yum clean all
+
+## Set kernel params
+RUN echo "root soft nofile 8192" >> /etc/security/limits.d/99-maximo.conf
+RUN echo "root hard nofile 8192" >> /etc/security/limits.d/99-maximo.conf
+RUN echo "root soft fsize -1" >> /etc/security/limits.d/99-maximo.conf
+RUN echo "root hard fsize -1" >> /etc/security/limits.d/99-maximo.conf
+RUN ulimit -f unlimited
+RUN ulimit -n 8192
+
+# Install IBM DB2 V10.5
+ENV DB2_IMAGE DB2_Svr_V10.5_Linux_x86-64.tar.gz
+
+RUN mkdir /work
+WORKDIR /work
+
+ENV MAXDB_DATADIR /home/ctginst1/
+VOLUME $MAXDB_DATADIR
+
+ENV VARDB2_DATADIR /var/db2
+VOLUME $VARDB2_DATADIR
+
+ENV CTGINST1_PW ctginst1
+ENV CTGFENC1_PW ctginst1
+ENV DASUSR1_PW ctginst1
+ENV MAXIMO_PW maximo
+
+RUN groupadd ctggrp1
+RUN groupadd ctgfgrp1
+RUN groupadd dasadm1
+RUN groupadd maximo
+RUN useradd -g ctggrp1 -m -d /home/ctginst1 ctginst1
+RUN echo "ctginst1:$CTGINST1_PW" | chpasswd
+RUN useradd -g ctgfgrp1 -m -d /home/ctgfenc1 ctgfenc1
+RUN echo "ctgfenc1:$CTGFENC1_PW" | chpasswd
+RUN useradd -g dasadm1 -m -d /home/dasusr1 dasusr1
+RUN echo "dasusr1:$DASUSR1_PW" | chpasswd
+RUN useradd -g maximo -m -d /home/maximo maximo
+RUN echo "maximo:$MAXIMO_PW" | chpasswd
+
+# Install DB2 V10.5
+COPY db2ese.rsp /work
+RUN wget -q $url/$DB2_IMAGE \
+  && tar -zxpf $DB2_IMAGE \
+  && ./server/db2setup -r ./db2ese.rsp \
+  && rm -rf *
+
+# Install DB2 Fixpack
+ENV DB2_FP_IMAGE v10.5fp${fp}_linuxx64_server_t.tar.gz
+RUN wget -q $url/$DB2_FP_IMAGE \
+  && tar -zxpf $DB2_FP_IMAGE \
+  && cd server_t \
+  && ./installFixPack -b /opt/ibm/db2/V10.5 -f update \
+  && cd .. \
+  && rm -rf *
+
+ENV DB2_LIC_FILE DB2_ESE_Restricted_QS_Act_V10.5.zip
+RUN wget -q $url/$DB2_LIC_FILE \
+ && unzip -q $DB2_LIC_FILE \
+ && /opt/ibm/db2/V10.5/adm/db2licm -a ese_o/db2/license/db2ese_o.lic \
+ && /opt/ibm/db2/V10.5/adm/db2licm -l \
+ && rm -rf *
+
+ENV MAXDB MAXDB76
+
+COPY startdb2.sh /opt
+RUN chmod +x /opt/startdb2.sh
+ENTRYPOINT ["/opt/startdb2.sh"]

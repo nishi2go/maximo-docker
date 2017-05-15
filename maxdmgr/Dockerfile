@@ -9,27 +9,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 FROM maximo/maxwas
 
 MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
 ENV WAS_HOME /opt/IBM/WebSphere/AppServer
-ENV PROFILE_NAME ctgAppSrv01
-ENV CELL_NAME ctgNodeCell01
-ENV NODE_NAME ctgNode01
-ENV DMGR_HOST_NAME maxdmgr
-ENV DMGR_PORT 8879
-ENV DMGR_ADMIN_USER wasadmin
-ENV DMGR_ADMIN_PASSWORD wasadmin
-ENV WEB_SERVER_HOST_NAME maxweb
-ENV WEB_SERVER_PORT 80
+ENV PROFILE_NAME ctgDmgr01
+ENV CELL_NAME ctgCell01
+ENV NODE_NAME ctgCellManager01
+ENV WASADMIN wasadmin
+ENV WASADMIN_PASSWORD wasadmin
 
-RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
-    && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh
+COPY startdm.sh /opt
+RUN chmod +x /opt/startdm.sh
 
-COPY startapp.sh /opt
-RUN chmod +x /opt/startapp.sh
+EXPOSE 40541 11006 9632 9060 9352 9420 9100 7277 8879 9809 9043 7060 9402 9403
 
-EXPOSE 9080 9443 34593 7272 9353 9900 8878 9201 9202 7062 2809 11004 9629
-
-ENTRYPOINT ["/opt/startapp.sh"]
+ENTRYPOINT ["/opt/startdm.sh"]
