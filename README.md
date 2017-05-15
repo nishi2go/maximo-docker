@@ -100,8 +100,8 @@ Prereq: all binaries should be accessible via a web server during building phase
     docker build -t maximo/maximo:7.6.0.7 -t maximo/maximo:latest \
     --network build maximo
     ```
-5. Run containers by using the Docker Compose file to create and deploy instances:
+7. Run containers by using the Docker Compose file to create and deploy instances:
     ```bash
     docker-compose run -d
     ```
-6. Make sure to be accessible to Maximo login page: http://<hostname>/maximo
+8. Make sure to be accessible to Maximo login page: http://<hostname>/maximo
