@@ -1,5 +1,5 @@
 # Building and deploying an IBM Maximo Asset Management V7.6 with Feature Pack image
-====================================================================================
+------------------------------------------------------------------------------------
 
 The following instructions can be used to build an IBM Maximo Asset Management image for V7.6. This images consist of several components e.g. WebSphere, DB2, and Maximo installation program.
 
@@ -79,13 +79,11 @@ Prereq: all binaries should be accessible via a web server during building phase
 6. Build Docker images:
     Build DB2 image:
     ```bash
-    docker build -t maximo/db2:10.5.0.7 -t maximo/db2:latest \
-    --network build maxdb
+    docker build -t maximo/db2:10.5.0.7 -t maximo/db2:latest --network build maxdb
     ```
     Build WebSphere Application Server base image:
     ```bash
-    docker build -t maximo/maxwas:8.5.5.11 -t maximo/maxwas:latest \
-     --network build maxwas
+    docker build -t maximo/maxwas:8.5.5.11 -t maximo/maxwas:latest --network build maxwas
     ```
     Build WebSphere Application Server Deployment Manager image:
     ```bash
@@ -97,18 +95,16 @@ Prereq: all binaries should be accessible via a web server during building phase
     ```
     Build IBM HTTP Server image:
     ```bash
-    docker build -t maximo/maxweb:8.5.5.11 -t maximo/maxweb:latest \
-    --network build maxweb
+    docker build -t maximo/maxweb:8.5.5.11 -t maximo/maxweb:latest --network build maxweb
     ```
     Build Maximo Asset Management Installation image:
     ```bash
-    docker build -t maximo/maximo:7.6.0.7 -t maximo/maximo:latest \
-    --network build maximo
+    docker build -t maximo/maximo:7.6.0.7 -t maximo/maximo:latest --network build maximo
     ```
     Note: If the build has failed during Maximo Feature Pack installation, run the docker build again.
 7. Run containers by using the Docker Compose file to create and deploy instances:
     ```bash
-    docker-compose run -d
+    docker-compose up -d
     ```
     Note: It will take 3-4 hours (depend on your machine) to complete the installation.
 8. Make sure to be accessible to Maximo login page: http://hostname/maximo
