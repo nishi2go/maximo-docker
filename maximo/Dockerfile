@@ -21,7 +21,7 @@ ARG url=http://images
 ENV TEMP /tmp
 WORKDIR /tmp
 
-RUN yum update -y && yum install -y wget unzip nc && yum clean all
+RUN yum update -y && yum install -y wget unzip nc which && yum clean all
 
 # Install IBM Installation Manager 1.8
 ENV IM_IMAGE agent.installer.linux.gtk.x86_64_1.8.0.20140902_1503.zip

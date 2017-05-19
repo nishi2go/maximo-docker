@@ -18,8 +18,11 @@ ENV TEMP /tmp
 WORKDIR /tmp
 
 RUN yum update -y && yum install -y wget ksh unzip tar bc net-tools bind-utils nc \
- pam.i686 psmisc compat-libstdc++-33 compat-libstdc++-33.i686 && yum clean all
+ pam.i686 psmisc compat-libstdc++-33 compat-libstdc++-33.i686 which && yum clean all
 
+RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
+    && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh
+    
 RUN echo "root soft nofile 8192" >> /etc/security/limits.d/99-maximo.conf
 RUN echo "root hard nofile 8192" >> /etc/security/limits.d/99-maximo.conf
 RUN echo "root soft fsize -1" >> /etc/security/limits.d/99-maximo.conf

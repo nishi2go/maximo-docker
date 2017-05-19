@@ -24,9 +24,6 @@ ENV DMGR_ADMIN_PASSWORD wasadmin
 ENV WEB_SERVER_HOST_NAME maxweb
 ENV WEB_SERVER_PORT 80
 
-RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
-    && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh
-
 COPY startapp.sh /opt
 RUN chmod +x /opt/startapp.sh
 
