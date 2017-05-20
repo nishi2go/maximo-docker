@@ -18,8 +18,8 @@ ENV WAS_HOME /opt/IBM/WebSphere/AppServer
 ENV PROFILE_NAME ctgDmgr01
 ENV CELL_NAME ctgCell01
 ENV NODE_NAME ctgCellManager01
-ENV WASADMIN wasadmin
-ENV WASADMIN_PASSWORD wasadmin
+ENV DMGR_ADMIN_USER wasadmin
+ENV DMGR_ADMIN_PASSWORD wasadmin
 
 COPY startdm.sh /opt
 RUN chmod +x /opt/startdm.sh

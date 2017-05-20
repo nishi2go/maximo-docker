@@ -72,8 +72,8 @@ WAS.DeploymentManagerProfileName=$WAS_DM_PROFILE_NAME
 WAS.DeploymentManagerNodeName=$WAS_DM_NODE_NAME
 WAS.DeploymentManagerRemoteHostName=$WAS_DM_FQDN
 WAS.DeploymentManagerRemoteHostPort=$DMGR_PORT
-WAS.AdminUserName=$WASADMIN_USER_NAME
-WAS.AdminPassword=$WASADMIN_PASSWORD
+WAS.AdminUserName=$DMGR_ADMIN_USER
+WAS.AdminPassword=$DMGR_ADMIN_PASSWORD
 WAS.VirtualHost=maximo_host
 EOF
 
@@ -83,12 +83,12 @@ EOF
 
 # Add 80 and 443 to maximo_host
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
-    -username "$WASADMIN_USER_NAME" -password "$WASADMIN_PASSWORD" \
+    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
     -f /opt/AddVirtualHosts.py
 
 # Stop all application servers
 # /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
-#    -username "$WASADMIN_USER_NAME" -password "$WASADMIN_PASSWORD" \
+#    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
 #    -f /opt/StopAllServers.py
 
 sleep 10
@@ -98,5 +98,5 @@ sleep 10
 
 # Start all application servers ... sometimes to fail to start servers duing updateApplicaton task
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
-    -username "$WASADMIN_USER_NAME" -password "$WASADMIN_PASSWORD" \
+    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
     -f /opt/StartAllServers.py

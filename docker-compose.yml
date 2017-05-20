@@ -3,6 +3,11 @@ services:
   maxdb:
     image: maximo/db2
     hostname: maxdb
+    environment:
+    - CTGINST1_PASSWORD=changeit
+    - CTGFENC1_PASSWORD=changeit
+    - DASUSR1_PASSWORD=changeit
+    - MAXIMO_PASSWORD=changeit
     networks:
     - maxnet
     privileged: true
@@ -14,11 +19,15 @@ services:
     hostname: maxdmgr
     ports:
     - 9043:9043
+    environment:
+    - DMGR_ADMIN_PASSWORD=changeit
     networks:
     - maxnet
   maxapps:
     image: maximo/maxapps
     hostname: maxapps
+    environment:
+    - DMGR_ADMIN_PASSWORD=changeit
     networks:
     - maximo
     depends_on:
@@ -29,6 +38,8 @@ services:
   maxweb:
     image: maximo/maxweb
     hostname: maxweb
+    environment:
+    - DMGR_ADMIN_PASSWORD=changeit
     ports:
     - 80:80
     depends_on:
@@ -38,6 +49,12 @@ services:
   maximo:
     image: maximo/maximo
     hostname: maximo
+    environment:
+    - DMGR_ADMIN_PASSWORD=changeit
+    - DB_MAXIMO_PASSWORD=changeit
+    - MXINTADM_PASSWORD=changeit
+    - MAXADMIN_PASSWORD=changeit
+    - MAXREG_PASSWORD=changeit
     networks:
     - maximo
     depends_on:
@@ -47,8 +64,8 @@ services:
     networks:
     - maxnet
 networks:
-  maxnet: 
+  maxnet:
 volumes:
-  maxdb76: 
+  maxdb76:
   vardb2:
-  pae76: 
+  pae76:

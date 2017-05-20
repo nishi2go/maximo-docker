@@ -24,6 +24,12 @@ then
     cp -r /etc/skel/. /home/ctginst1
 fi
 
+# Change user passwords
+echo "ctginst1:$CTGINST1_PASSWORD" | chpasswd
+echo "ctgfenc1:$CTGFENC1_PASSWORD" | chpasswd
+echo "dasusr1:$DASUSR1_PASSWORD" | chpasswd
+echo "maximo:$MAXIMO_PASSWORD" | chpasswd
+
 # If ctginst1 exists but it does not exist in global directory, remove all files in ctginst1 home
 instance=`/opt/ibm/db2/V10.5/instance/db2ilist | grep ctginst1 | grep -v grep | awk '{ print $2 }'`
 if [ "$instance" = "" ]
