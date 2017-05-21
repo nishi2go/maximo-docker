@@ -40,7 +40,7 @@ if [ ! -d "$PROFILE_PATH" ] ; then
   	echo "LoadModule was_ap22_module /opt/IBM/WebSphere/Plugins/bin/64bits/mod_was_ap22_http.so" >> /opt/IBM/HTTPServer/conf/httpd.conf
     echo "WebSpherePluginConfig /opt/IBM/WebSphere/Plugins/config/$WEB_SERVER_NAME/plugin-cfg.xml" >> /opt/IBM/HTTPServer/conf/httpd.conf
 else
-  $WAS_HOEM/profiles/$PROFILE_NAME/bin/startNode.sh
+  $WAS_HOME/profiles/$PROFILE_NAME/bin/startNode.sh
 fi
 
 /opt/IBM/HTTPServer/bin/apachectl -k start

@@ -24,8 +24,8 @@ if [ ! -d "$PROFILE_PATH" ] ; then
       -cellName $CELL_NAME \
       -nodeName $NODE_NAME \
       -enableAdminSecurity  "true" \
-      -adminUserName "$WASADMIN" \
-      -adminPassword "$WASADMIN_PASSWORD"
+      -adminUserName "$DMGR_ADMIN_USER" \
+      -adminPassword "$DMGR_ADMIN_PASSWORD"
 fi
 
 # Start DM

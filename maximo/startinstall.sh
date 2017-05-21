@@ -21,7 +21,19 @@ wait-for-it.sh $DB_HOST_NAME:$DB_PORT -t 0 -q -- echo "Database is up"
 DB_FQDN=`ping $DB_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' '`
 WAS_DM_FQDN=`ping $DMGR_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' '`
 
-cat > /opt/maximo-config.properties <<EOF
+#copy skel files
+CONFIG_FILE=/opt/maximo-config.properties
+if [ -f $CONFIG_FILE ]
+then
+  echo "Maximo has already configured. Run the app servers."
+  # Start all application servers
+  /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
+    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
+    -f /opt/StartAllServers.py
+  exit
+fi
+
+cat > $CONFIG_FILE <<EOF
 MW.Operation=Configure
 # Maximo Configuration Parameters
 mxe.adminuserloginid=maxadmin
@@ -79,12 +91,17 @@ EOF
 
 # Run Configuration Tool
 /opt/IBM/SMP/ConfigTool/scripts/reconfigurePae.sh -action deployConfiguration \
-    -inputfile /opt/maximo-config.properties -automatej2eeconfig
+    -inputfile $CONFIG_FILE -automatej2eeconfig
 
 # Add 80 and 443 to maximo_host
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
     -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
     -f /opt/AddVirtualHosts.py
+
+# Enable application server auto restart
+/opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
+    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
+    -f /opt/SetAutoRestart.py
 
 # Stop all application servers
 # /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \

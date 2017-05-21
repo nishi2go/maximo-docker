@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#Set up DAS
-/opt/ibm/db2/V10.5/instance/dascrt -u dasusr1
-su - dasusr1 -c '/opt/ibm/db2/V10.5/das/bin/db2admin start'
-
 chown ctginst1.ctggrp1 $MAXDB_DATADIR
 
 #copy skel files
@@ -30,10 +26,12 @@ echo "ctgfenc1:$CTGFENC1_PASSWORD" | chpasswd
 echo "dasusr1:$DASUSR1_PASSWORD" | chpasswd
 echo "maximo:$MAXIMO_PASSWORD" | chpasswd
 
-# If ctginst1 exists but it does not exist in global directory, remove all files in ctginst1 home
-instance=`/opt/ibm/db2/V10.5/instance/db2ilist | grep ctginst1 | grep -v grep | awk '{ print $2 }'`
-if [ "$instance" = "" ]
+if [ ! -d "/home/ctginst1/sqllib" ]
 then
+    #Set up DAS
+    /opt/ibm/db2/V10.5/instance/dascrt -u dasusr1
+    su - dasusr1 -c '/opt/ibm/db2/V10.5/das/bin/db2admin start'
+
     rm -rf /home/ctginst1/*
     /opt/ibm/db2/V10.5/instance/db2icrt -s ese -u ctgfenc1 -p 50005 ctginst1
     su - ctginst1 <<- EOS
@@ -112,17 +110,18 @@ then
     db2 connect reset
     db2stop force
 EOS
+
+    # Enable Fault Monitor
+    /opt/ibm/db2/V10.5/bin/db2fmcu -u -p /opt/ibm/db2/V10.5/bin/db2fmcd
+    /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -U
+    /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -u
+    /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -f on
 fi
 
-# Enable Fault Monitor
-/opt/ibm/db2/V10.5/bin/db2fmcu -u -p /opt/ibm/db2/V10.5/bin/db2fmcd
-/opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -U
-/opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -u
-/opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -f on
-
+su - dasusr1 -c '/opt/ibm/db2/V10.5/das/bin/db2admin start'
 su - ctginst1 -c db2start
 
 # Wait until DB2 port is opened
-while ncat localhost 50005  >/dev/null 2>&1; do
+while ncat localhost 50005 >/dev/null 2>&1; do
   sleep 10
 done

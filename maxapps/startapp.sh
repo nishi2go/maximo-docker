@@ -48,7 +48,7 @@ if [ ! -d "$PROFILE_PATH" ] ; then
           -nodeName $NODE_NAME
     done
 else
-  $WAS_HOEM/profiles/$PROFILE_NAME/bin/startNode.sh
+  $WAS_HOME/profiles/$PROFILE_NAME/bin/startNode.sh
 fi
 
 # Watch and wait the nodeagent process
