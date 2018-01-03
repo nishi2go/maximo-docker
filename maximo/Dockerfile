@@ -92,6 +92,7 @@ RUN wget -q https://raw.githubusercontent.com/wsadminlib/wsadminlib/master/bin/w
 COPY StopAllServers.py /opt
 COPY StartAllServers.py /opt
 COPY AddVirtualHosts.py /opt
+COPY SetAutoRestart.py /opt
 
 COPY startinstall.sh /work
 RUN chmod +x startinstall.sh
