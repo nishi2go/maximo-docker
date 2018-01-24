@@ -18,7 +18,7 @@ ARG url=http://images
 ARG fp=7
 
 ## Install required software
-RUN yum update -y && yum install -y wget unzip tar nc bc net-tools bind-utils \
+RUN yum update -y && yum install -y wget unzip tar bsdtar nc bc net-tools bind-utils \
     passwd pam pam.i686 ncurses-libs.i686 file libaio compat-libstdc++-33 compat-libstdc++-33.i686 && yum clean all
 
 ## Set kernel params
@@ -69,7 +69,7 @@ RUN wget -q $url/$DB2_IMAGE \
 # Install DB2 Fixpack
 ENV DB2_FP_IMAGE v10.5fp${fp}_linuxx64_server_t.tar.gz
 RUN wget -q $url/$DB2_FP_IMAGE \
-  && tar -zxpf $DB2_FP_IMAGE \
+  && bsdtar -zxpf $DB2_FP_IMAGE \
   && cd server_t \
   && ./installFixPack -b /opt/ibm/db2/V10.5 -f update \
   && cd .. \
