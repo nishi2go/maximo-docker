@@ -15,7 +15,7 @@ The following instructions can be used to build an IBM Maximo Asset Management i
 
 * IBM Maximo Asset Management V7.6 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
 
-  IBM Maximo Asset Manament V7.6 binaries:
+  IBM Maximo Asset Management V7.6 binaries:
   * MAM_7.6.0.0_LINUX64.tar.gz
 
   IBM WebSphere Application Server Network Deployment V8.5.5 binaries:
@@ -34,7 +34,7 @@ The following instructions can be used to build an IBM Maximo Asset Management i
 
 * Feature Pack / Fix Pack binaries from [Fix Central](http://www-933.ibm.com/support/fixcentral/)
 
-  IBM Maximo Asset Manament V7.6 Feature Pack 7 binaries:
+  IBM Maximo Asset Management V7.6 Feature Pack 7 binaries:
   * MAMMTFP7607IMRepo.zip
 
   IBM WebSphere Application Server Network Deployment Fixpack V8.5.5.11 binaries:
@@ -50,7 +50,7 @@ The following instructions can be used to build an IBM Maximo Asset Management i
   IBM WebSphere SDK Java Technology Edition V7.1.3.60 binaries:
   * 7.1.3.60-WS-IBMWASJAVA-Linux.zip
 
-  IBM DB2 Universal V10.5 Fix Pack 7
+  IBM DB2 Server V10.5 Fix Pack 7
   * v10.5fp7_linuxx64_server_t.tar.gz
 
 ## Building the IBM Maximo Asset Management V7.6 image
