@@ -1,7 +1,7 @@
-# Building and deploying an IBM Maximo Asset Management V7.6 with Feature Pack image
+# Building and deploying an IBM Maximo Asset Management V7.6 with Feature Pack image to Docker
 ------------------------------------------------------------------------------------
 
-The following instructions can be used to build an IBM Maximo Asset Management image for V7.6. This images consist of several components e.g. WebSphere, DB2, and Maximo installation program.
+Maximo on Docker enables to run Maximo Asset Management on Docker. The images are deployed fine-grained services instead of single instance. The following instructions describe how to set up IBM Maximo Asset Management V7.6 Docker images. This images consist of several components e.g. WebSphere, DB2, and Maximo installation program.
 
 ![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.png)
 
@@ -87,11 +87,11 @@ Prereq: all binaries should be accessible via a web server during building phase
     ```
     Build WebSphere Application Server Deployment Manager image:
     ```bash
-    docker build -t maximo/maxdmgr:8.5.5.11 -t maximo/maxdmgr:latest maxdmgr
+    docker build -t maximo/maxdmgr:8.5.5.11 -t maximo/maxdmgr:latest --network build maxdmgr
     ```
     Build WebSphere Application Server AppServer image:
     ```bash
-    docker build -t maximo/maxapps:8.5.5.11 -t maximo/maxapps:latest maxapps
+    docker build -t maximo/maxapps:8.5.5.11 -t maximo/maxapps:latest --network build maxapps
     ```
     Build IBM HTTP Server image:
     ```bash
