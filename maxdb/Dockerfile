@@ -15,10 +15,10 @@ MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
 ARG url=http://images
 
-ARG fp=7
+ARG fp=9
 
 ## Install required software
-RUN yum update -y && yum install -y wget unzip tar bsdtar nc bc net-tools bind-utils \
+RUN yum update -y && yum install -y wget unzip bsdtar nc bc net-tools bind-utils \
     passwd pam pam.i686 ncurses-libs.i686 file libaio compat-libstdc++-33 compat-libstdc++-33.i686 && yum clean all
 
 ## Set kernel params
@@ -35,8 +35,7 @@ ENV DB2_IMAGE DB2_Svr_V10.5_Linux_x86-64.tar.gz
 RUN mkdir /work
 WORKDIR /work
 
-ENV MAXDB_DATADIR /home/ctginst1/
-VOLUME $MAXDB_DATADIR
+ENV MAXDB_DATADIR /home/ctginst1/ctginst1
 
 ENV VARDB2_DATADIR /var/db2
 VOLUME $VARDB2_DATADIR
@@ -59,21 +58,31 @@ RUN echo "dasusr1:$DASUSR1_PASSWORD" | chpasswd
 RUN useradd -g maximo -m -d /home/maximo maximo
 RUN echo "maximo:$MAXIMO_PASSWORD" | chpasswd
 
+VOLUME $MAXDB_DATADIR
+
 # Install DB2 V10.5
 COPY db2ese.rsp /work
 RUN wget -q $url/$DB2_IMAGE \
-  && tar -zxpf $DB2_IMAGE \
+  && bsdtar -zxpf $DB2_IMAGE \
   && ./server/db2setup -r ./db2ese.rsp \
   && rm -rf *
+
+RUN /opt/ibm/db2/V10.5/bin/db2fmcu -d
 
 # Install DB2 Fixpack
 ENV DB2_FP_IMAGE v10.5fp${fp}_linuxx64_server_t.tar.gz
 RUN wget -q $url/$DB2_FP_IMAGE \
   && bsdtar -zxpf $DB2_FP_IMAGE \
   && cd server_t \
-  && ./installFixPack -b /opt/ibm/db2/V10.5 -f update \
+  && ./installFixPack -n -b /opt/ibm/db2/V10.5 \
+   -f NOTSAMP -f update -f nobackup \
   && cd .. \
   && rm -rf *
+
+RUN /opt/ibm/db2/V10.5/instance/dascrt -u dasusr1
+
+COPY db2fmcd.service /etc/systemd/system/db2fmcd.service
+RUN systemctl enable db2fmcd
 
 ENV DB2_LIC_FILE DB2_ESE_Restricted_QS_Act_V10.5.zip
 RUN wget -q $url/$DB2_LIC_FILE \

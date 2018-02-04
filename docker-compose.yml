@@ -12,7 +12,7 @@ services:
     - maxnet
     privileged: true
     volumes:
-    - maxdb76:/home/ctginst1
+    - maxdb76:/home/ctginst1/ctginst1
     - vardb2:/var/db2
   maxdmgr:
     image: maximo/maxdmgr

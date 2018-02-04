@@ -15,6 +15,7 @@ FROM maximo/maxwas
 MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
 ARG url=http://images
+ARG fp=12
 
 WORKDIR /tmp
 
@@ -42,7 +43,7 @@ RUN mkdir ${WASND_SUPPL_NAME} \
  && rm -rf ${WASND_SUPPL_NAME}*
 
 # Install IBM HTTP Server 8.5.5 FP11 and WebSphere Plugin 8.5.5 FP11
-ENV WASFP_SUPPL_NAME 8.5.5-WS-WASSupplements-FP011
+ENV WASFP_SUPPL_NAME 8.5.5-WS-WASSupplements-FP0${fp}
 RUN mkdir ${WASFP_SUPPL_NAME} \
  && wget -q ${url}/${WASFP_SUPPL_NAME}-part1.zip \
  && unzip -qd ./${WASFP_SUPPL_NAME} ${WASFP_SUPPL_NAME}-part1.zip \

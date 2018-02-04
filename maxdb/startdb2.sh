@@ -29,7 +29,6 @@ echo "maximo:$MAXIMO_PASSWORD" | chpasswd
 if [ ! -d "/home/ctginst1/sqllib" ]
 then
     #Set up DAS
-    /opt/ibm/db2/V10.5/instance/dascrt -u dasusr1
     su - dasusr1 -c '/opt/ibm/db2/V10.5/das/bin/db2admin start'
 
     rm -rf /home/ctginst1/*
@@ -112,7 +111,6 @@ then
 EOS
 
     # Enable Fault Monitor
-    /opt/ibm/db2/V10.5/bin/db2fmcu -u -p /opt/ibm/db2/V10.5/bin/db2fmcd
     /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -U
     /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -u
     /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -f on

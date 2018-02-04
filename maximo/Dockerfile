@@ -14,7 +14,7 @@ FROM centos:7
 
 MAINTAINER Yasutaka Nishimura <nishi2go@gmail.com>
 
-ARG fp=7
+ARG fp=9
 
 ARG url=http://images
 

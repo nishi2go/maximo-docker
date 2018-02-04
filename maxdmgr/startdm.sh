@@ -17,7 +17,7 @@ PROFILE_PATH=$WAS_HOME/profiles/$PROFILE_NAME
 if [ ! -d "$PROFILE_PATH" ] ; then
     $WAS_HOME/bin/manageprofiles.sh \
       -create \
-      -templatePath $WAS_HOME/profileTemplates/dmgr \
+      -templatePath $WAS_HOME/profileTemplates/management \
       -hostName `hostname -f` \
       -profileName $PROFILE_NAME \
       -profilePath $PROFILE_PATH \

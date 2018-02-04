@@ -13,6 +13,8 @@
 FROM centos:7
 
 ARG url=http://images
+ARG fp=12
+ARG javafp=7.1.4.5
 
 ENV TEMP /tmp
 WORKDIR /tmp
@@ -22,7 +24,7 @@ RUN yum update -y && yum install -y wget ksh unzip tar bc net-tools bind-utils n
 
 RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
     && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh
-    
+
 RUN echo "root soft nofile 8192" >> /etc/security/limits.d/99-maximo.conf
 RUN echo "root hard nofile 8192" >> /etc/security/limits.d/99-maximo.conf
 RUN echo "root soft fsize -1" >> /etc/security/limits.d/99-maximo.conf
@@ -62,7 +64,7 @@ RUN mkdir ${WASND_BASE_NAME} \
 ###### IBM WebSphere Application Server Network Deployment Fixpack #######
 
 # Install IBM WebSphere Application Server ND FP v85511
-ENV WASFP_BASE_NAME 8.5.5-WS-WAS-FP011
+ENV WASFP_BASE_NAME 8.5.5-WS-WAS-FP0${fp}
 RUN mkdir ${WASFP_BASE_NAME} \
  && wget -q ${url}/${WASFP_BASE_NAME}-part1.zip \
  && unzip -qd ./${WASFP_BASE_NAME} ${WASFP_BASE_NAME}-part1.zip \
@@ -81,7 +83,7 @@ RUN mkdir ${WASFP_BASE_NAME} \
  && rm -rf ${WASFP_BASE_NAME}*
 
 # Install IBM Java SDK 7.1
-ENV JAVA_SDK_NAME 7.1.3.60-WS-IBMWASJAVA-Linux
+ENV JAVA_SDK_NAME ${javafp}-WS-IBMWASJAVA-Linux
 RUN mkdir ${JAVA_SDK_NAME} \
  && wget -q ${url}/${JAVA_SDK_NAME}.zip \
  && unzip -qd ./${JAVA_SDK_NAME} ${JAVA_SDK_NAME}.zip \
