@@ -17,6 +17,7 @@ MAINTAINER Yasutaka Nishimura <nishi2go@gmail.com>
 ARG fp=9
 
 ARG url=http://images
+ARG httpport=80
 
 ENV TEMP /tmp
 WORKDIR /tmp
@@ -79,7 +80,7 @@ ENV WAS_DM_NODE_NAME ctgCellManager01
 ENV WAS_NODE_NAME ctgNode01
 ENV WEB_SERVER_NAME webserver1
 ENV WEB_SERVER_HOST_NAME maxweb
-ENV WEB_SERVER_PORT 80
+ENV WEB_SERVER_PORT ${httpport}
 ENV APP_SERVER_HOST_NAME maxapps
 ENV APP_SERVER_PORT 8878
 

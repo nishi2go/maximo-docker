@@ -15,11 +15,12 @@ MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
 ARG url=http://images
 
-ARG fp=9
+ARG ver=11.1
+ARG fp=3fp3
 
 ## Install required software
 RUN yum update -y && yum install -y wget unzip bsdtar nc bc net-tools bind-utils \
-    passwd pam pam.i686 ncurses-libs.i686 file libaio compat-libstdc++-33 compat-libstdc++-33.i686 && yum clean all
+    passwd pam pam.i686 ncurses-libs.i686 file libaio compat-libstdc++-33 compat-libstdc++-33.i686 numactl-libs && yum clean all
 
 ## Set kernel params
 RUN echo "root soft nofile 8192" >> /etc/security/limits.d/99-maximo.conf
@@ -30,7 +31,7 @@ RUN ulimit -f unlimited
 RUN ulimit -n 8192
 
 # Install IBM DB2 V10.5
-ENV DB2_IMAGE DB2_Svr_V10.5_Linux_x86-64.tar.gz
+ENV DB2_IMAGE DB2_AWSE_REST_Svr_${ver}_Lnx_86-64.tar.gz
 
 RUN mkdir /work
 WORKDIR /work
@@ -60,36 +61,31 @@ RUN echo "maximo:$MAXIMO_PASSWORD" | chpasswd
 
 VOLUME $MAXDB_DATADIR
 
-# Install DB2 V10.5
-COPY db2ese.rsp /work
+# Install DB2 V11.1
+COPY db2awse.rsp /work
 RUN wget -q $url/$DB2_IMAGE \
   && bsdtar -zxpf $DB2_IMAGE \
-  && ./server/db2setup -r ./db2ese.rsp \
+  && ./server_awse_o/db2setup -r ./db2awse.rsp \
+  && /opt/ibm/db2/V11.1/adm/db2licm -a ./server_awse_o/db2/license/db2awse_o.lic \
+  && /opt/ibm/db2/V11.1/adm/db2licm -l \
   && rm -rf *
 
-RUN /opt/ibm/db2/V10.5/bin/db2fmcu -d
+RUN /opt/ibm/db2/V${ver}/bin/db2fmcu -d
 
 # Install DB2 Fixpack
-ENV DB2_FP_IMAGE v10.5fp${fp}_linuxx64_server_t.tar.gz
+ENV DB2_FP_IMAGE v${ver}.${fp}_linuxx64_server_t.tar.gz
 RUN wget -q $url/$DB2_FP_IMAGE \
   && bsdtar -zxpf $DB2_FP_IMAGE \
   && cd server_t \
-  && ./installFixPack -n -b /opt/ibm/db2/V10.5 \
+  && ./installFixPack -n -b /opt/ibm/db2/V${ver} \
    -f NOTSAMP -f update -f nobackup \
   && cd .. \
   && rm -rf *
 
-RUN /opt/ibm/db2/V10.5/instance/dascrt -u dasusr1
+RUN /opt/ibm/db2/V${ver}/instance/dascrt -u dasusr1
 
 COPY db2fmcd.service /etc/systemd/system/db2fmcd.service
 RUN systemctl enable db2fmcd
-
-ENV DB2_LIC_FILE DB2_ESE_Restricted_QS_Act_V10.5.zip
-RUN wget -q $url/$DB2_LIC_FILE \
- && unzip -q $DB2_LIC_FILE \
- && /opt/ibm/db2/V10.5/adm/db2licm -a ese_o/db2/license/db2ese_o.lic \
- && /opt/ibm/db2/V10.5/adm/db2licm -l \
- && rm -rf *
 
 ENV MAXDB MAXDB76
 

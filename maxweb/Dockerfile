@@ -15,54 +15,60 @@ FROM maximo/maxwas
 MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
 ARG url=http://images
-ARG fp=12
+ARG fp=7
+ARG javafp=5.16
+ARG httpport=80
 
 WORKDIR /tmp
 
-# Install IBM HTTP Server 8.5.5 and WebSphere Plugin 8.5.5
-ENV WASND_SUPPL_NAME WAS_V8.5.5_SUPPL
-RUN mkdir ${WASND_SUPPL_NAME} \
- && wget -q ${url}/${WASND_SUPPL_NAME}_1_OF_3.zip \
- && unzip -qd ./${WASND_SUPPL_NAME} ${WASND_SUPPL_NAME}_1_OF_3.zip \
- && rm ${WASND_SUPPL_NAME}_1_OF_3.zip \
- && wget -q ${url}/${WASND_SUPPL_NAME}_2_OF_3.zip \
- && unzip -qd ./${WASND_SUPPL_NAME} ${WASND_SUPPL_NAME}_2_OF_3.zip \
- && rm ${WASND_SUPPL_NAME}_2_OF_3.zip \
-  && wget -q ${url}/${WASND_SUPPL_NAME}_3_OF_3.zip \
- && unzip -qd ./${WASND_SUPPL_NAME} ${WASND_SUPPL_NAME}_3_OF_3.zip \
- && rm ${WASND_SUPPL_NAME}_3_OF_3.zip \
- && /opt/IBM/InstallationManager/eclipse/tools/imcl \
-   -acceptLicense install com.ibm.websphere.IHS.v85 \
-   -repositories ${WASND_SUPPL_NAME}/repository.config \
-   -properties user.ihs.httpPort=80 \
+# Install IBM HTTP Server V9
+ENV WASND_IHS_NAME was.repo.9000.ihs
+ENV WASND_JAVA_NAME sdk.repo.8030.java8.linux
+RUN wget -q ${url}/${WASND_IHS_NAME}.zip \
+ && wget -q ${url}/${WASND_JAVA_NAME}.zip \
+ && /opt/IBM/InstallationManager/eclipse/tools/imcl -acceptLicense \
+   install com.ibm.websphere.IHS.v90 com.ibm.java.jdk.v8 \
+   -repositories /tmp/${WASND_IHS_NAME}.zip,/tmp/${WASND_JAVA_NAME}.zip \
+   -properties user.ihs.httpPort=${httpport} \
    -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
- && /opt/IBM/InstallationManager/eclipse/tools/imcl \
-   -acceptLicense install com.ibm.websphere.PLG.v85 \
-   -repositories ${WASND_SUPPL_NAME}/repository.config \
-   -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
- && rm -rf ${WASND_SUPPL_NAME}*
+ && rm -rf ${WASND_IHS_NAME}* \
+ && rm -rf ${WASND_JAVA_NAME}*
 
-# Install IBM HTTP Server 8.5.5 FP11 and WebSphere Plugin 8.5.5 FP11
-ENV WASFP_SUPPL_NAME 8.5.5-WS-WASSupplements-FP0${fp}
-RUN mkdir ${WASFP_SUPPL_NAME} \
- && wget -q ${url}/${WASFP_SUPPL_NAME}-part1.zip \
- && unzip -qd ./${WASFP_SUPPL_NAME} ${WASFP_SUPPL_NAME}-part1.zip \
- && rm ${WASFP_SUPPL_NAME}-part1.zip \
- && wget -q ${url}/${WASFP_SUPPL_NAME}-part2.zip \
- && unzip -qd ./${WASFP_SUPPL_NAME} ${WASFP_SUPPL_NAME}-part2.zip \
- && rm ${WASFP_SUPPL_NAME}-part2.zip \
- && wget -q ${url}/${WASFP_SUPPL_NAME}-part3.zip \
- && unzip -qd ./${WASFP_SUPPL_NAME} ${WASFP_SUPPL_NAME}-part3.zip \
- && rm ${WASFP_SUPPL_NAME}-part3.zip \
- && /opt/IBM/InstallationManager/eclipse/tools/imcl \
-   -acceptLicense install  com.ibm.websphere.IHS.v85 \
-   -repositories ${WASFP_SUPPL_NAME}/repository.config \
+# Install WebSphere Plugin V9
+ENV WASND_PLG_NAME was.repo.9000.plugins
+RUN wget -q ${url}/${WASND_PLG_NAME}.zip \
+ && wget -q ${url}/${WASND_JAVA_NAME}.zip \
+ && /opt/IBM/InstallationManager/eclipse/tools/imcl -acceptLicense \
+   install com.ibm.websphere.PLG.v90 com.ibm.java.jdk.v8 \
+   -repositories /tmp/${WASND_PLG_NAME}.zip,/tmp/${WASND_JAVA_NAME}.zip \
+   -installationDirectory /opt/IBM/WebSphere/Plugins \
    -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
+ && rm -rf ${WASND_PLG_NAME}* \
+ && rm -rf ${WASND_JAVA_NAME}*
+
+# Install IBM HTTP Server and WebSphere Plugin V9 fix pack 7
+ENV WASFP_IHS_NAME 9.0.0-WS-IHSPLG-FP00${fp}
+RUN wget -q ${url}/${WASFP_IHS_NAME}.zip \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl \
-   -acceptLicense install com.ibm.websphere.PLG.v85 \
-   -repositories ${WASFP_SUPPL_NAME}/repository.config \
+   -acceptLicense install com.ibm.websphere.IHS.v90 com.ibm.websphere.PLG.v90 \
+   -repositories ${WASFP_IHS_NAME}.zip \
    -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
- && rm -rf ${WASFP_SUPPL_NAME}*
+ && rm -rf ${WASFP_IHS_NAME}*
+
+# Install IBM Java SDK Fix pack
+ENV JAVA_SDK_NAME ibm-java-sdk-8.0-${javafp}-linux-x64-installmgr
+RUN wget -q ${url}/${JAVA_SDK_NAME}.zip \
+ && /opt/IBM/InstallationManager/eclipse/tools/imcl \
+   -acceptLicense install com.ibm.java.jdk.v8 \
+   -repositories /tmp/${JAVA_SDK_NAME}.zip \
+   -installationDirectory /opt/IBM/HTTPServer \
+   -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
+  && /opt/IBM/InstallationManager/eclipse/tools/imcl \
+   -acceptLicense install com.ibm.java.jdk.v8 \
+   -repositories /tmp/${JAVA_SDK_NAME}.zip \
+   -installationDirectory /opt/IBM/WebSphere/Plugins \
+   -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
+ && rm -rf ${JAVA_SDK_NAME}*
 
 WORKDIR /opt
 
@@ -77,12 +83,12 @@ ENV DMGR_PORT 8879
 ENV DMGR_ADMIN_USER wasadmin
 ENV DMGR_ADMIN_PASSWORD wasadmin
 ENV WEB_SERVER_NAME webserver1
-ENV WEB_SERVER_PORT 80
+ENV WEB_SERVER_PORT ${httpport}
 
 COPY startihs.sh /opt
 COPY CreateWebServer.py /opt
 RUN chmod +x /opt/startihs.sh
 
-EXPOSE 80 443 34450 7272 9353 9900 8878 9201 9202 7062 2809 11004 9629
+EXPOSE ${httpport} 34450 7272 9353 9900 8878 9201 9202 7062 2809 11004 9629
 
 ENTRYPOINT ["/opt/startihs.sh"]

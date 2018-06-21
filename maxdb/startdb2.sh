@@ -14,6 +14,8 @@
 
 chown ctginst1.ctggrp1 $MAXDB_DATADIR
 
+DB2_PATH=/opt/ibm/db2/V11.1
+
 #copy skel files
 if [ ! -f "/home/ctginst1/.bashrc" ]
 then
@@ -29,10 +31,12 @@ echo "maximo:$MAXIMO_PASSWORD" | chpasswd
 if [ ! -d "/home/ctginst1/sqllib" ]
 then
     #Set up DAS
-    su - dasusr1 -c '/opt/ibm/db2/V10.5/das/bin/db2admin start'
+    su - dasusr1 <<- EOS
+    ${DB2_PATH}/das/bin/db2admin start
+EOS
 
     rm -rf /home/ctginst1/*
-    /opt/ibm/db2/V10.5/instance/db2icrt -s ese -u ctgfenc1 -p 50005 ctginst1
+    ${DB2_PATH}/instance/db2icrt -s ese -u ctgfenc1 -p 50005 ctginst1
     su - ctginst1 <<- EOS
     db2start
     db2 update dbm config using SVCENAME 50005 DEFERRED
@@ -111,12 +115,15 @@ then
 EOS
 
     # Enable Fault Monitor
-    /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -U
-    /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -u
-    /opt/ibm/db2/V10.5/bin/db2fm -i ctginst1 -f on
+    ${DB2_PATH}/bin/db2fm -i ctginst1 -U
+    ${DB2_PATH}/bin/db2fm -i ctginst1 -u
+    ${DB2_PATH}/bin/db2fm -i ctginst1 -f on
 fi
 
-su - dasusr1 -c '/opt/ibm/db2/V10.5/das/bin/db2admin start'
+su - dasusr1 <<- EOS
+    ${DB2_PATH}/das/bin/db2admin start
+EOS
+
 su - ctginst1 -c db2start
 
 # Wait until DB2 port is opened
