@@ -15,8 +15,8 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
 
 * IBM Maximo Asset Management V7.6 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
 
-  IBM Maximo Asset Management V7.6 binaries:
-  * MAM_7.6.0.0_LINUX64.tar.gz
+  IBM Maximo Asset Management V7.6.1 binaries:
+  * MAM_7.6.1_LINUX64.tar.gz
 
   IBM WebSphere Application Server traditional V9 binaries:
   * WAS_ND_V9.0_MP_ML.zip
@@ -32,9 +32,6 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
   * DB2_AWSE_REST_Svr_11.1_Lnx_86-64.tar.gz
 
 * Feature Pack/Fix Pack binaries from [Fix Central](http://www-933.ibm.com/support/fixcentral/)
-
-  IBM Maximo Asset Management V7.6 Feature Pack 9 binaries:
-  * MAMMTFP7609IMRepo.zip
 
   IBM WebSphere Application Server traditional Fixpack V9.0.0.7 binaries:
   * 9.0.0-WS-WAS-FP007.zip
@@ -94,7 +91,7 @@ Prereq: all binaries should be accessible via a web server during building phase
     ```
     Build Maximo Asset Management Installation image:
     ```bash
-    docker build -t maximo/maximo:7.6.0.9 -t maximo/maximo:latest --network build maximo
+    docker build -t maximo/maximo:7.6.1 -t maximo/maximo:latest --network build maximo
     ```
     Note: If the build has failed during Maximo Feature Pack installation, run the docker build again.
 7. Run containers by using the Docker Compose file to create and deploy instances:
