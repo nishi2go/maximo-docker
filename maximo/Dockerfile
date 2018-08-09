@@ -42,18 +42,17 @@ WORKDIR /Launchpad
 
 ENV BYPASS_PRS=True
 
-## Install Maximo V7.6
-ENV MAM_IMAGE MAM_7.6.0.0_LINUX64.tar.gz
-RUN wget -q $url/$MAM_IMAGE && tar zxpf $MAM_IMAGE \
+## Install Maximo V7.6.1
+ENV MAM_IMAGE MAM_7.6.1_LINUX64.tar.gz
+## Remove z from tar command because file is not gzipped despite having gz extension
+RUN wget -q $url/$MAM_IMAGE && tar xpf $MAM_IMAGE \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl \
- -input /Launchpad/SilentResponseFiles/Installer/Unix/ResponseFile_MAM_Install_Unix.xml \
+ -input /Launchpad/SilentResponseFiles/Unix/ResponseFile_MAM_Install_Unix.xml \
  -acceptLicense -log /tmp/MAM_Install_Unix.xml \
  && rm $MAM_IMAGE
 
-## Install Maximo V7.6.0.7 feature packs
 RUN mkdir /work
 WORKDIR /work
-ENV MAM_FP_IMAGE MAMMTFP760${fp}IMRepo.zip
 
 RUN wget -q $url/$MAM_FP_IMAGE && sleep 30 \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl install \
