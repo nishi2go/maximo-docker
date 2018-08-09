@@ -14,10 +14,11 @@ FROM centos:7
 
 MAINTAINER Yasutaka Nishimura <nishi2go@gmail.com>
 
-ARG fp=9
+ARG fp=1
 
 ARG url=http://images
 ARG httpport=80
+ARG installfp=no
 
 ENV TEMP /tmp
 WORKDIR /tmp
@@ -54,11 +55,13 @@ RUN wget -q $url/$MAM_IMAGE && tar xpf $MAM_IMAGE \
 RUN mkdir /work
 WORKDIR /work
 
-RUN wget -q $url/$MAM_FP_IMAGE && sleep 30 \
+# Install Maximo V7.6.1 feature pack
+ENV MAM_FP_IMAGE MAMMTFP761${fp}IMRepo.zip
+RUN if [ "${installfp}" = "yes" ]; then wget -q $url/$MAM_FP_IMAGE && sleep 30 \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl install \
  com.ibm.tivoli.tpae.base.mam.main -repositories /work/$MAM_FP_IMAGE \
  -installationDirectory /opt/IBM/SMP -log /tmp/FP_Install_Unix.xml -acceptLicense \
- && rm $MAM_FP_IMAGE
+ && rm $MAM_FP_IMAGE; fi
 
 ENV MAXADMIN_PASSWORD maxadmin
 ENV MAXREG_PASSWORD maxreg
