@@ -18,8 +18,8 @@ wait-for-it.sh $WEB_SERVER_HOST_NAME:$WEB_SERVER_PORT -t 0 -q -- echo "Web Serve
 wait-for-it.sh $DMGR_HOST_NAME:$DMGR_PORT -t 0 -q -- echo "Deployment Manager is up"
 wait-for-it.sh $DB_HOST_NAME:$DB_PORT -t 0 -q -- echo "Database is up"
 
-DB_FQDN=`ping $DB_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' '`
-WAS_DM_FQDN=`ping $DMGR_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' '`
+DB_FQDN=`ping $DB_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' ' | tr -d ':'`
+WAS_DM_FQDN=`ping $DMGR_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' ' | tr -d ':'`
 
 #copy skel files
 CONFIG_FILE=/opt/maximo-config.properties
@@ -111,7 +111,7 @@ EOF
 sleep 10
 
 /opt/IBM/SMP/ConfigTool/scripts/reconfigurePae.sh -action updateApplication \
-    -updatedb -deploymaximoear -enableSkin tivoli13 -enableEnhancedNavigation
+    -updatedb -deploymaximoear -enableSkin "$SKIN" -enableEnhancedNavigation
 
 # Start all application servers ... sometimes to fail to start servers duing updateApplicaton task
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \

@@ -127,6 +127,10 @@ EOS
 su - ctginst1 -c db2start
 
 # Wait until DB2 port is opened
+until ncat localhost 50005 >/dev/null 2>&1; do
+  sleep 10
+done
+
 while ncat localhost 50005 >/dev/null 2>&1; do
   sleep 10
 done

@@ -9,7 +9,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM centos:7
+FROM ubuntu:16.04
 
 MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
@@ -19,8 +19,9 @@ ARG ver=11.1
 ARG fp=3fp3
 
 ## Install required software
-RUN yum update -y && yum install -y wget unzip bsdtar nc bc net-tools bind-utils \
-    passwd pam pam.i686 ncurses-libs.i686 file libaio compat-libstdc++-33 compat-libstdc++-33.i686 numactl-libs && yum clean all
+RUN dpkg --add-architecture i386
+RUN apt update -y && apt install -y wget unzip bsdtar netcat file libx32stdc++6 libpam0g:i386 binutils libaio1 libnuma1 \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Set kernel params
 RUN echo "root soft nofile 8192" >> /etc/security/limits.d/99-maximo.conf
@@ -85,6 +86,7 @@ RUN wget -q $url/$DB2_FP_IMAGE \
 RUN /opt/ibm/db2/V${ver}/instance/dascrt -u dasusr1
 
 COPY db2fmcd.service /etc/systemd/system/db2fmcd.service
+RUN chmod 644 /etc/systemd/system/db2fmcd.service
 RUN systemctl enable db2fmcd
 
 ENV MAXDB MAXDB76

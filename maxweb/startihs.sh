@@ -46,6 +46,10 @@ fi
 /opt/IBM/HTTPServer/bin/apachectl -k start
 
 # Watch and wait the nodeagent
+until ncat localhost 8878 >/dev/null 2>&1; do
+  sleep 10
+done
+
 while ncat localhost 8878 >/dev/null 2>&1; do
   sleep 10
 done

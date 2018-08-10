@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM centos:7
+FROM maximo/ibmim
 
 MAINTAINER Yasutaka Nishimura <nishi2go@gmail.com>
 
@@ -19,23 +19,13 @@ ARG fp=1
 ARG url=http://images
 ARG httpport=80
 ARG installfp=no
+ARG skin=iot18
 
 ENV TEMP /tmp
 WORKDIR /tmp
 
-RUN yum update -y && yum install -y wget unzip nc which && yum clean all
-
-# Install IBM Installation Manager 1.8
-ENV IM_IMAGE agent.installer.linux.gtk.x86_64_1.8.0.20140902_1503.zip
-
-RUN mkdir /Install_Mgr && wget -q $url/$IM_IMAGE \
- && unzip -q -d /Install_Mgr $IM_IMAGE \
- && rm $IM_IMAGE \
- && /Install_Mgr/installc -log /tmp/IM_Install_Unix.xml -acceptLicense \
- && rm -rf /Install_Mgr
-
-## Update Installation Manager
-RUN /opt/IBM/InstallationManager/eclipse/tools/imcl install com.ibm.cic.agent
+# Install required packages
+RUN apt update && apt install -y netcat inetutils-ping && rm -rf /var/lib/apt/lists/*
 
 ## Install Maximo middleware and installer
 RUN mkdir /Launchpad
@@ -96,6 +86,8 @@ COPY StopAllServers.py /opt
 COPY StartAllServers.py /opt
 COPY AddVirtualHosts.py /opt
 COPY SetAutoRestart.py /opt
+
+ENV SKIN=${skin}
 
 COPY startinstall.sh /work
 RUN chmod +x startinstall.sh

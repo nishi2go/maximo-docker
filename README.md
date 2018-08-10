@@ -10,10 +10,10 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
 
 * IBM Installation Manager binaries from [Installation Manager 1.8 download documents](http://www-01.ibm.com/support/docview.wss?uid=swg24037640)
 
-  IBM Installation Manager binaries:
-  * agent.installer.linux.gtk.x86_64_1.8.0.20140902_1503.zip
+  IBM Enterprise Deployment (formaly known as IBM Installation Manager) binaries:
+  * IED_V1.8.8_Wins_Linux_86.zip
 
-* IBM Maximo Asset Management V7.6 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
+* IBM Maximo Asset Management V7.6.1 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
 
   IBM Maximo Asset Management V7.6.1 binaries:
   * MAM_7.6.1_LINUX64.tar.gz
@@ -72,6 +72,10 @@ Prereq: all binaries should be accessible via a web server during building phase
     Build Db2 image:
     ```bash
     docker build -t maximo/db2:11.1.3 -t maximo/db2:latest --network build maxdb
+    ```
+    Build IBM Enterprise Deployment (IBM Installation Manager) image:
+    ```bash
+    docker build -t maximo/ibmim:1.8.8 -t maximo/ibmim:latest --network build ibmim
     ```
     Build WebSphere Application Server base image:
     ```bash

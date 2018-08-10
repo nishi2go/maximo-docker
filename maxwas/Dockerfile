@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM centos:7
+FROM maximo/ibmim
 
 ARG url=http://images
 ARG fp=7
@@ -19,8 +19,8 @@ ARG javafp=5.16
 ENV TEMP /tmp
 WORKDIR /tmp
 
-RUN yum update -y && yum install -y wget ksh unzip tar bc net-tools bind-utils nc \
- pam.i686 psmisc compat-libstdc++-33 compat-libstdc++-33.i686 which && yum clean all
+RUN apt update && apt install -y tar bc net-tools netcat psmisc \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
     && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh
@@ -32,16 +32,6 @@ RUN echo "root hard fsize -1" >> /etc/security/limits.d/99-maximo.conf
 RUN ulimit -f unlimited
 RUN ulimit -n 8192
 RUN echo "fs.file-max = 1232457" >> /etc/sysctl.d/99-maximo.conf
-
-# Install IBM Installation Manager 1.8
-ENV IM_IMAGE agent.installer.linux.gtk.x86_64_1.8.0.20140902_1503.zip
-
-RUN mkdir /Install_Mgr && wget -q $url/$IM_IMAGE \
- && unzip -q -d /Install_Mgr $IM_IMAGE \
- && rm $IM_IMAGE \
- && /Install_Mgr/installc -log /tmp/IM_Install_Unix.xml -acceptLicense \
- && /opt/IBM/InstallationManager/eclipse/tools/imcl install com.ibm.cic.agent \
- && rm -rf /Install_Mgr
 
 # Install IBM WebSphere Application Server traditional V9
 ENV WASND_BASE_NAME WAS_ND_V9.0_MP_ML
