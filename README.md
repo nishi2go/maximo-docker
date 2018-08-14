@@ -10,7 +10,7 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
 
 * IBM Installation Manager binaries from [Installation Manager 1.8 download documents](http://www-01.ibm.com/support/docview.wss?uid=swg24037640)
 
-  IBM Enterprise Deployment (formaly known as IBM Installation Manager) binaries:
+  IBM Enterprise Deployment (formerly known as IBM Installation Manager) binaries:
   * IED_V1.8.8_Wins_Linux_86.zip
 
 * IBM Maximo Asset Management V7.6.1 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
@@ -45,12 +45,53 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
   IBM Db2 Server V11.1 Fix Pack 3
   * v11.1.3fp3_linuxx64_server_t.tar.gz
 
-## Building the IBM Maximo Asset Management V7.6 image
+## Building IBM Maximo Asset Management V7.6 image by using build tool
 ------------------------------------------------------
 
-Prereq: all binaries should be accessible via a web server during building phase.
+Prerequisites: all binaries must be accessible via a web server during building phase.
 
-1. Place the downloaded IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory
+You can use a tool for building docker images by using the build tool.
+
+Usage:
+```
+Usage: build.sh [DIR] [OPTION]...
+
+-c | --check            Check required packages
+-C | --deepcheck        Check and compare checksum of required packages
+-d | --check-dir [DIR]  The directory for validating packages (Docker for Windows only)
+-h | --help             Show this help text
+```
+
+Procedures:
+1. Place the downloaded Maximo, IBM Db2, IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory
+2. Run build tool
+   ```bash
+   bash build.sh [Image Dir] [-c] [-C]
+   ```
+
+   Example:
+   ```bash
+   bash build.sh /images -c
+   ```
+
+   Example for Docker for Windows:
+   ```bash
+   bash build.sh /images -c -d "C:/images"
+   ```
+3. Run containers by using the Docker Compose file to create and deploy instances:
+    ```bash
+    docker-compose up -d
+    ```
+    Note: It will take 3-4 hours (depend on your machine) to complete the installation.
+4. Make sure to be accessible to Maximo login page: http://hostname/maximo
+
+## Building IBM Maximo Asset Management V7.6 image by manually
+------------------------------------------------------
+
+Prerequisites: all binaries must be accessible via a web server during building phase.
+
+Procedures:
+1. Place the downloaded Maximo, IBM Db2, IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory
 2. Create docker network for build with:
     ```bash
     docker network create build
