@@ -64,9 +64,17 @@ Usage: build.sh [DIR] [OPTION]...
 
 Procedures:
 1. Place the downloaded Maximo, IBM Db2, IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory
-2. Run build tool
+2. Clone this repository
+    ```bash
+    git clone https://github.com/nishi2go/maximo-docker.git
+    ```
+3. Move to the directory
+    ```bash
+    cd maximo-docker
+    ```
+4. Run build tool
    ```bash
-   bash build.sh [Image Dir] [-c] [-C]
+   bash build.sh [Image directory] [-c] [-C]
    ```
 
    Example:
@@ -78,14 +86,14 @@ Procedures:
    ```bash
    bash build.sh "C:/images" -c -d /images
    ```
-   Note1: This script works on Windows Subsystem on Linux.<br>
-   Note2: md5sum is required. For Mac, install it manually - https://raamdev.com/2008/howto-install-md5sum-sha1sum-on-mac-os-x/
-3. Run containers by using the Docker Compose file to create and deploy instances:
+   Note 1: This script works on Windows Subsystem on Linux.<br>
+   Note 2: md5sum is required. For Mac, install it manually - https://raamdev.com/2008/howto-install-md5sum-sha1sum-on-mac-os-x/
+5. Run containers by using the Docker Compose file to create and deploy instances:
     ```bash
     docker-compose up -d
     ```
     Note: It will take 3-4 hours (depend on your machine) to complete the installation.
-4. Make sure to be accessible to Maximo login page: http://hostname/maximo
+6. Make sure to be accessible to Maximo login page: http://hostname/maximo
 
 ## Building IBM Maximo Asset Management V7.6 image by manually
 ------------------------------------------------------
@@ -101,7 +109,7 @@ Procedures:
 3. Run nginx docker image to be able to download binaries from HTTP
     ```bash
     docker run --name images -h images --network build \
-    -v <Image directory>:/usr/share/nginx/html:ro -d nginx
+    -v [Image directory]:/usr/share/nginx/html:ro -d nginx
     ```
 4. Clone this repository
     ```bash
