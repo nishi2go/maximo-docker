@@ -78,7 +78,7 @@ Procedures:
    ```bash
    bash build.sh "C:/images" -c -d /images
    ```
-   Note1: This script works on Windows Subsystem on Linux.
+   Note1: This script works on Windows Subsystem on Linux.<br>
    Note2: md5sum is required. For Mac, install it manually - https://raamdev.com/2008/howto-install-md5sum-sha1sum-on-mac-os-x/
 3. Run containers by using the Docker Compose file to create and deploy instances:
     ```bash
