@@ -14,13 +14,17 @@
    limitations under the License.
 """
 
-execfile('/opt/wsadminlib.py')
+import sys
 
-nodeName = sys.argv[0]
-webServerName = sys.argv[1]
-webServerPort = sys.argv[2]
-httpServerHome = sys.argv[3]
-webspherePluginHome = sys.argv[4]
+
+def load_wsadminlib(filename='/opt/wsadminlib.py'):
+    global createWebserver, generatePluginCfg, saveAndSyncAndPrintResult
+    with open(filename) as in_file:
+        exec(in_file.read())
+
+
+load_wsadminlib()
+nodeName, webServerName, webServerPort, httpServerHome, webspherePluginHome = sys.argv[:5]
 
 createWebserver(webServerName, nodeName, webServerPort, httpServerHome, webspherePluginHome,
     httpServerHome + '/conf/httpd.conf', 'ALL', '8008', 'admin', 'password')

@@ -14,9 +14,14 @@
    limitations under the License.
 """
 
-execfile('/opt/wsadminlib.py')
 
+def load_wsadminlib(filename='/opt/wsadminlib.py'):
+    global enableDebugMessages, listAllAppServers, stopServer
+    with open(filename) as in_file:
+        exec(in_file.read())
+
+
+load_wsadminlib()
 enableDebugMessages()
-
 for (nodename, servername) in listAllAppServers():
     stopServer(nodename, servername)
