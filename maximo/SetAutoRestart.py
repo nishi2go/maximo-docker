@@ -14,32 +14,40 @@
    limitations under the License.
 """
 
-execfile('/opt/wsadminlib.py')
+
+def load_wsadminlib(filename='/opt/wsadminlib.py'):
+    global enableDebugMessages, getObjectsOfType, getServerId, listAllAppServers, save
+    global setObjectAttributes, sop
+    with open(filename) as in_file:
+        exec(in_file.read())
+
+
+load_wsadminlib()
+
 
 def setServerAutoRestart(nodename, servername, autorestart, state):
     """Sets whether the nodeagent will automatically restart a failed server.
 
     Specify autorestart='true' or 'false' (as a string)"""
     m = "setServerAutoRestart:"
-    sop(m,"Entry. nodename=%s servername=%s autorestart=%s" % ( nodename, servername, autorestart ))
-    if autorestart != "true" and autorestart != "false":
-        raise m + " Invocation Error: autorestart must be 'true' or 'false'. autorestart=%s" % ( autorestart )
-    server_id = getServerId(nodename,servername)
-    if server_id == None:
-        raise " Error: Could not find server. servername=%s nodename=%s" % (nodename,servername)
-    sop(m,"server_id=%s" % server_id)
+    sop(m, "Entry. nodename=%s servername=%s autorestart=%s" % (nodename, servername, autorestart))
+    if autorestart not in ("true", "false"):
+        raise Exception(m + " Invocation Error: autorestart must be 'true' or 'false'. autorestart=%s" % (autorestart))
+    server_id = getServerId(nodename, servername)
+    if server_id is None:
+        raise Exception(" Error: Could not find server. servername=%s nodename=%s" % (nodename, servername))
+    sop(m, "server_id=%s" % server_id)
     monitors = getObjectsOfType('MonitoringPolicy', server_id)
-    sop(m,"monitors=%s" % ( repr(monitors)) )
+    sop(m, "monitors=%s" % (repr(monitors)))
     if len(monitors) == 1:
-        setObjectAttributes(monitors[0], autoRestart = "%s" % (autorestart))
-        setObjectAttributes(monitors[0], nodeRestartState = "%s" % (state))
+        setObjectAttributes(monitors[0], autoRestart="%s" % (autorestart))
+        setObjectAttributes(monitors[0], nodeRestartState="%s" % (state))
     else:
-        raise m + "ERROR Server has an unexpected number of monitor object(s). monitors=%s" % ( repr(monitors) )
-    sop(m,"Exit.")
+        raise Exception(m + "ERROR Server has an unexpected number of monitor object(s). monitors=%s" % (repr(monitors)))
+    sop(m, "Exit.")
+
 
 enableDebugMessages()
-
 for (nodename, servername) in listAllAppServers():
     setServerAutoRestart(nodename, servername, 'true', 'RUNNING')
-
 save()

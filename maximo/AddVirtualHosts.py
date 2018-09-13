@@ -14,8 +14,14 @@
    limitations under the License.
 """
 
-execfile('/opt/wsadminlib.py')
 
+def load_wsadminlib(filename='/opt/wsadminlib.py'):
+    global addHostAlias, enableDebugMessages, hostAliasExists, save
+    with open(filename) as in_file:
+        exec(in_file.read())
+
+
+load_wsadminlib()
 enableDebugMessages()
 
 if not hostAliasExists('maximo_host', '*', 80):
