@@ -76,12 +76,14 @@ if [[ $CHECK -eq 1 ]]; then
      exit 9
    fi
 
-   res=`md5sum $CHECK_DIR/$file`
-   if [[ $GEN_PKG_LIST -eq 1 ]]; then
-     echo "$file,$res" >> $PACKAGE_LIST.out
-   elif [[ "$md5sum" == "$res" ]]; then
-     echo " MD5 does not match."
-     exit 9
+   if [[ $DEEP_CHECK -eq 1 ]]; then
+     res=`md5sum $CHECK_DIR/$file`
+     if [[ $GEN_PKG_LIST -eq 1 ]]; then
+       echo "$file,$res" >> $PACKAGE_LIST.out
+     elif [[ "$md5sum" == "$res" ]]; then
+       echo " MD5 does not match."
+       exit 9
+     fi
    fi
 
    echo " Found."
