@@ -28,8 +28,6 @@ services:
     hostname: maxapps
     environment:
     - DMGR_ADMIN_PASSWORD=changeit
-    networks:
-    - maximo
     depends_on:
       - maxdmgr
       - maxweb
@@ -55,8 +53,6 @@ services:
     - MXINTADM_PASSWORD=changeit
     - MAXADMIN_PASSWORD=changeit
     - MAXREG_PASSWORD=changeit
-    networks:
-    - maximo
     depends_on:
      - maxdb
      - maxapps
