@@ -8,12 +8,10 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
 ## Required packages
 --------------------
 
-* IBM Installation Manager binaries from [Installation Manager 1.8 download documents](http://www-01.ibm.com/support/docview.wss?uid=swg24037640)
+* IBM Maximo Asset Management V7.6.1 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
 
   IBM Enterprise Deployment (formerly known as IBM Installation Manager) binaries:
   * IED_V1.8.8_Wins_Linux_86.zip
-
-* IBM Maximo Asset Management V7.6.1 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
 
   IBM Maximo Asset Management V7.6.1 binaries:
   * MAM_7.6.1_LINUX64.tar.gz
@@ -58,6 +56,7 @@ Usage: build.sh [DIR] [OPTION]...
 
 -c | --check            Check required packages
 -C | --deepcheck        Check and compare checksum of required packages
+-r | --remove           Remove images when an image exists in repository
 -d | --check-dir [DIR]  The directory for validating packages (Docker for Windows only)
 -h | --help             Show this help text
 ```
@@ -74,17 +73,17 @@ Procedures:
     ```
 4. Run build tool
    ```bash
-   bash build.sh [Image directory] [-c] [-C]
+   bash build.sh [Image directory] [-c] [-C] [-r]
    ```
 
    Example:
    ```bash
-   bash build.sh /images -c
+   bash build.sh /images -c -r
    ```
 
    Example for Docker for Windows:
    ```bash
-   bash build.sh "C:/images" -c -d /images
+   bash build.sh "C:/images" -c -r -d /images
    ```
    Note 1: This script works on Windows Subsystem on Linux.<br>
    Note 2: md5sum is required. For Mac, install it manually - https://raamdev.com/2008/howto-install-md5sum-sha1sum-on-mac-os-x/
@@ -153,5 +152,5 @@ Procedures:
     ```bash
     docker-compose up -d
     ```
-    Note: It will take 3-4 hours (depend on your machine) to complete the installation.
+    Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
 8. Make sure to be accessible to Maximo login page: http://hostname/maximo
