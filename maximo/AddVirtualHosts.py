@@ -1,5 +1,5 @@
 """
-   Copyright Yasutaka Nishimura 2017
+   Copyright Yasutaka Nishimura 2017, 2019
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,7 +21,13 @@ def load_wsadminlib(filename='/opt/wsadminlib.py'):
         exec(in_file.read())
 
 
-load_wsadminlib()
+# Try execfile first for Jython
+filename = '/opt/wsadminlib.py'
+try:
+    execfile(filename)
+except NameError:
+    load_wsadminlib()
+
 enableDebugMessages()
 
 if not hostAliasExists('maximo_host', '*', 80):
