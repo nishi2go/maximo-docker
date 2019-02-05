@@ -29,11 +29,14 @@ REMOVE=0
 
 # Usage: remove "tag name" "version" "product name"
 function remove {
-  exists=`docker images -q --no-trunc $NAME_SPACE/$1:$2`
-  if [[ ! -z "$exists" ]]; then
-    echo "Remove an old $3 image."
-    docker rmi -f $NAME_SPACE/$1:$2
-    docker rmi -f $NAME_SPACE/$1:latest
+  image_id=`docker images -q --no-trunc $NAME_SPACE/$1:$2`
+  if [[ ! -z "$image_id" ]]; then
+    echo "An old $3 image exists. Remove it."
+    container_ids=`docker ps -aq --no-trunc -f ancestor=$image_id`
+    if [[ ! -z "$container_ids" ]]; then
+      docker rm -f $container_ids
+    fi
+    docker rmi -f "$image_id"
   fi
 }
 
@@ -148,11 +151,11 @@ fi
 # Remove and run a container for HTTP server
 images_exists=`docker ps -aq --no-trunc -f "name=^/${IMAGE_SERVER_NAME}$"`
 if [[ ! -z "$images_exists" ]]; then
-    echo "Docker container image has been started. Remove it."
+    echo "Docker container images has been started. Remove it."
     docker rm -f "$images_exists"
 fi
 
-echo "Start a container - image"
+echo "Start a container - images"
 docker run --rm --name ${IMAGE_SERVER_NAME} -h ${IMAGE_SERVER_HOST_NAME} --network ${BUILD_NETWORK_NAME} \
  -v "$IMAGE_DIR":/usr/share/nginx/html:ro -d nginx
 docker ps -f "name=^/${IMAGE_SERVER_NAME}"
@@ -177,8 +180,6 @@ build "maxweb" "$WAS_VER" "maxweb" "IBM HTTP Server"
 
 # Build IBM Maximo Asset Management image
 build "maximo" "$MAXIMO_VER" "maximo" "IBM Maximo Asset Management"
-
-#docker build -t maximo/maximo:$MAXIMO_VER -t maximo/maximo:latest --network build maximo
 
 echo "Stop the images container."
 docker stop "${IMAGE_SERVER_NAME}"
