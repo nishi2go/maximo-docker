@@ -75,20 +75,20 @@ ENV WEB_SERVER_HOST_NAME maxweb
 ENV WEB_SERVER_PORT ${httpport}
 ENV APP_SERVER_HOST_NAME maxapps
 ENV APP_SERVER_PORT 8878
+ENV UPDATE_APPS_ON_REBOOT no
 
 RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
     && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh
 
-RUN wget -q https://raw.githubusercontent.com/wsadminlib/wsadminlib/master/bin/wsadminlib.py \
-    && mv wsadminlib.py /opt
+RUN wget -q https://raw.githubusercontent.com/wsadminlib/wsadminlib/master/bin/wsadminlib.py
 
-COPY StopAllServers.py /opt
-COPY StartAllServers.py /opt
-COPY AddVirtualHosts.py /opt
-COPY SetAutoRestart.py /opt
+COPY StopAllServers.py /work
+COPY StartAllServers.py /work
+COPY AddVirtualHosts.py /work
+COPY SetAutoRestart.py /work
 
 ENV SKIN=${skin}
 
 COPY startinstall.sh /work
-RUN chmod +x startinstall.sh
+RUN chmod +x /work/startinstall.sh
 ENTRYPOINT ["/work/startinstall.sh"]

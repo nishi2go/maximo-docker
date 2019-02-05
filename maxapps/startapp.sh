@@ -13,9 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+function sigterm_handler {
+  $WAS_HOME/profiles/$PROFILE_NAME/bin/stopNode.sh \
+    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD"
+}
+
 # Wait until Deployment Manager and IHS port is opened
 wait-for-it.sh $DMGR_HOST_NAME:$DMGR_PORT -t 0 -q -- echo "Deployment Manager is up"
 wait-for-it.sh $WEB_SERVER_HOST_NAME:$WEB_SERVER_PORT -t 0 -q -- echo "Web Server is up"
+wait-for-it.sh $DB_HOST_NAME:$DB_PORT -t 0 -q -- echo "Database is up"
 
 ## Create WebSphere Application Server profile
 PROFILE_PATH=$WAS_HOME/profiles/$PROFILE_NAME
@@ -50,6 +56,8 @@ if [ ! -d "$PROFILE_PATH" ] ; then
 else
   $WAS_HOME/profiles/$PROFILE_NAME/bin/startNode.sh
 fi
+
+trap sigterm_handler SIGTERM
 
 # Watch and wait the nodeagent process
 while :

@@ -70,7 +70,8 @@ RUN wget -q ${url}/${JAVA_SDK_NAME}.zip \
    -preferences com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts=false \
  && rm -rf ${JAVA_SDK_NAME}*
 
-WORKDIR /opt
+RUN mkdir /work
+WORKDIR /work
 
 RUN wget -q https://raw.githubusercontent.com/wsadminlib/wsadminlib/master/bin/wsadminlib.py
 
@@ -85,10 +86,10 @@ ENV DMGR_ADMIN_PASSWORD wasadmin
 ENV WEB_SERVER_NAME webserver1
 ENV WEB_SERVER_PORT ${httpport}
 
-COPY startihs.sh /opt
-COPY CreateWebServer.py /opt
-RUN chmod +x /opt/startihs.sh
+COPY startihs.sh /work
+COPY CreateWebServer.py /work
+RUN chmod +x /work/startihs.sh
 
 EXPOSE ${httpport} 34450 7272 9353 9900 8878 9201 9202 7062 2809 11004 9629
 
-ENTRYPOINT ["/opt/startihs.sh"]
+ENTRYPOINT ["/work/startihs.sh"]

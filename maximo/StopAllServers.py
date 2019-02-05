@@ -15,14 +15,13 @@
 """
 
 
-def load_wsadminlib(filename='/opt/wsadminlib.py'):
+def load_wsadminlib(filename):
     global enableDebugMessages, listAllAppServers, stopServer
-    with open(filename) as in_file:
-        exec(in_file.read())
+    exec(open(filename).read())
 
 
 # Try execfile first for Jython
-filename = '/opt/wsadminlib.py'
+filename = '/work/wsadminlib.py'
 try:
     execfile(filename)
 except NameError:

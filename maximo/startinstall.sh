@@ -22,14 +22,15 @@ DB_FQDN=`ping $DB_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' ' | tr 
 WAS_DM_FQDN=`ping $DMGR_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' ' | tr -d ':'`
 
 #copy skel files
-CONFIG_FILE=/opt/maximo-config.properties
+CONFIG_FILE=/work/maximo-config.properties
 if [ -f $CONFIG_FILE ]
 then
-  echo "Maximo has already configured. Run the app servers."
-  # Start all application servers
-  /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
-    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
-    -f /opt/StartAllServers.py
+  echo "Maximo has already configured."
+  if [ "${UPDATE_APPS_ON_REBOOT}" = "yes" ]
+  then
+    /opt/IBM/SMP/ConfigTool/scripts/reconfigurePae.sh -action updateApplication \
+        -updatedb -deploymaximoear -enableSkin "$SKIN" -enableEnhancedNavigation
+  fi
   exit
 fi
 
@@ -50,7 +51,7 @@ mxe.db.user=maximo
 mxe.db.password=$DB_MAXIMO_PASSWORD
 mxe.db.schemaowner=maximo
 mxe.useAppServerSecurity=0
-mxe.db.url=jdbc:db2://$DB_FQDN:50005/maxdb76
+#mxe.db.url=jdbc:db2://$DB_FQDN:$DMGR_PORT/$MAXDB
 
 # Database Configuration Parameters
 Database.Vendor=DB2
@@ -93,20 +94,28 @@ EOF
 /opt/IBM/SMP/ConfigTool/scripts/reconfigurePae.sh -action deployConfiguration \
     -inputfile $CONFIG_FILE -automatej2eeconfig
 
+# Fix IP address issue
+MAXIMO_PROPERTIES=/opt/IBM/SMP/maximo/applications/maximo/properties/maximo.properties
+URL="jdbc:db2:\/\/$DB_HOST_NAME:$DB_PORT\/$MAXDB"
+sed -ie "s/^mxe.db.url=.*/mxe.db.url=$URL/" "$MAXIMO_PROPERTIES"
+
+INSTALL_PROPERTIES=/opt/IBM/SMP/etc/install.properties
+sed -ie "s/^Database.DB2.ServerHostName=.*/Database.DB2.ServerHostName=$DB_HOST_NAME/" "$INSTALL_PROPERTIES"
+
 # Add 80 and 443 to maximo_host
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
     -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
-    -f /opt/AddVirtualHosts.py
+    -f /work/AddVirtualHosts.py $WEB_SERVER_PORT
 
 # Enable application server auto restart
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
     -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
-    -f /opt/SetAutoRestart.py
+    -f /work/SetAutoRestart.py
 
 # Stop all application servers
 # /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
 #    -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
-#    -f /opt/StopAllServers.py
+#    -f /work/StopAllServers.py
 
 sleep 10
 
@@ -116,4 +125,4 @@ sleep 10
 # Start all application servers ... sometimes to fail to start servers duing updateApplicaton task
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
     -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
-    -f /opt/StartAllServers.py
+    -f /work/StartAllServers.py

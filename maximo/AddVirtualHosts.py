@@ -13,16 +13,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+import sys
 
 
-def load_wsadminlib(filename='/opt/wsadminlib.py'):
+def load_wsadminlib(filename):
     global addHostAlias, enableDebugMessages, hostAliasExists, save
-    with open(filename) as in_file:
-        exec(in_file.read())
+    exec(open(filename).read())
 
+
+# User defined web server port
+port = sys.argv[0]
 
 # Try execfile first for Jython
-filename = '/opt/wsadminlib.py'
+filename = '/work/wsadminlib.py'
 try:
     execfile(filename)
 except NameError:
@@ -35,4 +38,8 @@ if not hostAliasExists('maximo_host', '*', 80):
 
 if not hostAliasExists('maximo_host', '*', 443):
     addHostAlias('maximo_host', '*', 443)
+
+if not hostAliasExists('maximo_host', '*', port):
+    addHostAlias('maximo_host', '*', port)
+
 save()

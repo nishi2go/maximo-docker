@@ -24,7 +24,7 @@ def load_wsadminlib(filename):
 
 
 # Try execfile first for Jython
-filename = '/opt/wsadminlib.py'
+filename = '/work/wsadminlib.py'
 try:
     execfile(filename)
 except NameError:

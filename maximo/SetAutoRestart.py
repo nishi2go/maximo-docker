@@ -15,14 +15,13 @@
 """
 
 
-def load_wsadminlib(filename='/opt/wsadminlib.py'):
+def load_wsadminlib(filename):
     global enableDebugMessages, getObjectsOfType, getServerId, listAllAppServers, save
     global setObjectAttributes, sop
-    with open(filename) as in_file:
-        exec(in_file.read())
+    exec(open(filename).read())
 
 
-def setServerAutoRestart(nodename, servername, autorestart, state):
+def setServerAutoRestartState(nodename, servername, autorestart, state):
     """Sets whether the nodeagent will automatically restart a failed server.
 
     Specify autorestart='true' or 'false' (as a string)"""
@@ -45,7 +44,7 @@ def setServerAutoRestart(nodename, servername, autorestart, state):
 
 
 # Try execfile first for Jython
-filename = '/opt/wsadminlib.py'
+filename = '/work/wsadminlib.py'
 try:
     execfile(filename)
 except NameError:
@@ -53,5 +52,5 @@ except NameError:
 
 enableDebugMessages()
 for (nodename, servername) in listAllAppServers():
-    setServerAutoRestart(nodename, servername, 'true', 'RUNNING')
+    setServerAutoRestartState(nodename, servername, 'true', 'RUNNING')
 save()
