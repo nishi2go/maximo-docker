@@ -23,9 +23,6 @@ services:
 #      - type: bind
 #        source: ./backup
 #        target: /backup
-      - type: bind
-        source: D:/temporary/db2/backup
-        target: /backup
     healthcheck:
       test: ["CMD", "/opt/ibm/db2/V11.1/bin/db2gcf", "-i", "ctginst1", "-s"]
       interval: 30s
