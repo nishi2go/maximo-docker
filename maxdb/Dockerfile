@@ -44,23 +44,21 @@ VOLUME $VARDB2_DATADIR
 
 ENV CTGINST1_PASSWORD ctginst1
 ENV CTGFENC1_PASSWORD ctginst1
-ENV DASUSR1_PASSWORD ctginst1
 ENV MAXIMO_PASSWORD maximo
 
 RUN groupadd ctggrp1
 RUN groupadd ctgfgrp1
-RUN groupadd dasadm1
 RUN groupadd maximo
 RUN useradd -g ctggrp1 -m -d /home/ctginst1 ctginst1
 RUN echo "ctginst1:$CTGINST1_PASSWORD" | chpasswd
 RUN useradd -g ctgfgrp1 -m -d /home/ctgfenc1 ctgfenc1
 RUN echo "ctgfenc1:$CTGFENC1_PASSWORD" | chpasswd
-RUN useradd -g dasadm1 -m -d /home/dasusr1 dasusr1
-RUN echo "dasusr1:$DASUSR1_PASSWORD" | chpasswd
 RUN useradd -g maximo -m -d /home/maximo maximo
 RUN echo "maximo:$MAXIMO_PASSWORD" | chpasswd
 
 VOLUME $MAXDB_DATADIR
+
+RUN mkdir /backup && chown ctginst1.ctggrp1 /backup
 
 # Install DB2 V11.1
 COPY db2awse.rsp /work
@@ -70,8 +68,6 @@ RUN wget -q $url/$DB2_IMAGE \
   && /opt/ibm/db2/V11.1/adm/db2licm -a ./server_awse_o/db2/license/db2awse_o.lic \
   && /opt/ibm/db2/V11.1/adm/db2licm -l \
   && rm -rf *
-
-RUN /opt/ibm/db2/V${ver}/bin/db2fmcu -d
 
 # Install DB2 Fixpack
 ENV DB2_FP_IMAGE v${ver}.${fp}_linuxx64_server_t.tar.gz
@@ -83,14 +79,14 @@ RUN wget -q $url/$DB2_FP_IMAGE \
   && cd .. \
   && rm -rf *
 
-RUN /opt/ibm/db2/V${ver}/instance/dascrt -u dasusr1
-
-COPY db2fmcd.service /etc/systemd/system/db2fmcd.service
-RUN chmod 644 /etc/systemd/system/db2fmcd.service
-RUN systemctl enable db2fmcd
-
 ENV MAXDB MAXDB76
+ENV BACKUPDIR /backup
 
-COPY startdb2.sh /opt
-RUN chmod +x /opt/startdb2.sh
-ENTRYPOINT ["/opt/startdb2.sh"]
+EXPOSE 50005
+
+COPY backup.sh /work
+RUN chmod +x /work/backup.sh
+
+COPY startdb2.sh /work
+RUN chmod +x /work/startdb2.sh
+ENTRYPOINT ["/work/startdb2.sh"]

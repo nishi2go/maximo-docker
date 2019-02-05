@@ -3,7 +3,7 @@
 
 Maximo on Docker enables to run Maximo Asset Management on Docker. The images are deployed fine-grained services instead of single instance. The following instructions describe how to set up IBM Maximo Asset Management V7.6 Docker images. This images consist of several components e.g. WebSphere, Db2, and Maximo installation program.
 
-![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.png)
+![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.svg)
 
 ## Required packages
 --------------------
@@ -62,16 +62,16 @@ Usage: build.sh [DIR] [OPTION]...
 ```
 
 Procedures:
-1. Place the downloaded Maximo, IBM Db2, IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory
-2. Clone this repository
+1. Place the downloaded Maximo, IBM Db2, IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory.
+2. Clone this repository.
     ```bash
     git clone https://github.com/nishi2go/maximo-docker.git
     ```
-3. Move to the directory
+3. Move to the directory.
     ```bash
     cd maximo-docker
     ```
-4. Run build tool
+4. Run build tool.
    ```bash
    bash build.sh [Image directory] [-c] [-C] [-r]
    ```
@@ -87,11 +87,12 @@ Procedures:
    ```
    Note 1: This script works on Windows Subsystem on Linux.<br>
    Note 2: md5sum is required. For Mac, install it manually - https://raamdev.com/2008/howto-install-md5sum-sha1sum-on-mac-os-x/
-5. Run containers by using the Docker Compose file to create and deploy instances:
+5. Run containers by using the Docker Compose file to create and deploy new instances.
     ```bash
     docker-compose up -d
     ```
-    Note: It will take 3-4 hours (depend on your machine) to complete the installation.
+    Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
+    Note: To change the default passwords, edit XYZ_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
 6. Make sure to be accessible to Maximo login page: http://hostname/maximo
 
 ## Building IBM Maximo Asset Management V7.6 image by manually
@@ -105,16 +106,16 @@ Procedures:
     ```bash
     docker network create build
     ```
-3. Run nginx docker image to be able to download binaries from HTTP
+3. Run nginx docker image to be able to download binaries from HTTP.
     ```bash
     docker run --name images -h images --network build \
     -v [Image directory]:/usr/share/nginx/html:ro -d nginx
     ```
-4. Clone this repository
+4. Clone this repository.
     ```bash
     git clone https://github.com/nishi2go/maximo-docker.git
     ```
-5. Move to the directory
+5. Move to the directory.
     ```bash
     cd maximo-docker
     ```
@@ -148,9 +149,42 @@ Procedures:
     docker build -t maximo/maximo:7.6.1 -t maximo/maximo:latest --network build maximo
     ```
     Note: If the build has failed during Maximo Feature Pack installation, run the docker build again.
-7. Run containers by using the Docker Compose file to create and deploy instances:
+7. Run containers by using the Docker Compose file to create and deploy new instances.
     ```bash
     docker-compose up -d
     ```
     Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
+    Note: To change the default passwords, edit XYZ_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
 8. Make sure to be accessible to Maximo login page: http://hostname/maximo
+
+## Skip the maxinst process in starting up the maxdb container by using Db2 restore command
+------------------------------------------------------
+
+[Maxinst program](http://www-01.ibm.com/support/docview.wss?uid=swg21314938) supports to initialize and create a Maximo database that called during the "deployConfiguration" process in the Maximo installer. This process is painfully slow because it creates more than thousand tables from scratch. To skip the process, you can use a backup database to restore during first boot time in a maxdb service. So then, it can reduce the creation time for containers from second time.
+
+Procedures:
+1. Build container images first (follow above instructions)
+2. Move to the cloned directory.
+    ```bash
+    cd maximo-docker
+    ```
+3. Make a backup directory.
+    ```bash
+    mkdir ./backup
+    ```
+4. Uncomment the following volume configuration in docker-compose.yml.
+    ```yaml
+      maxdb:
+        volumes:
+          - type: bind
+            source: ./backup
+            target: /backup
+    ```
+5. Run containers by using the Docker Compose file. (follow above instructions)
+6. Take a backup from the maxdb service by using a backup tool.
+    ```bash
+    docker-compose exec maxdb /work/backup.sh maxdb76 /backup
+    ```
+    Note: Backup image must be only one in the directory. Backup task must fail when more than two images in it.
+
+So that, now you can create the containers from the backup image that is stored in the directory.

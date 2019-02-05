@@ -1,67 +1,117 @@
-version: '3'
+version: '3.6'
 services:
   maxdb:
     image: maximo/db2
     hostname: maxdb
     environment:
-    - CTGINST1_PASSWORD=changeit
-    - CTGFENC1_PASSWORD=changeit
-    - DASUSR1_PASSWORD=changeit
-    - MAXIMO_PASSWORD=changeit
+      - CTGINST1_PASSWORD=changeit
+      - CTGFENC1_PASSWORD=changeit
+      - MAXIMO_PASSWORD=changeit
+      - MAXDB_DATADIR=/home/ctginst1/ctginst1
+      - MAXDB=MAXDB76
+      - BACKUPDIR=/backup
     networks:
-    - maxnet
+      - maxnet
     privileged: true
     volumes:
-    - maxdb76:/home/ctginst1/ctginst1
-    - vardb2:/var/db2
+      - type: volume
+        source: maxdb76
+        target: /home/ctginst1/ctginst1
+      - type: volume
+        source: vardb2
+        target: /var/db2
+#      - type: bind
+#        source: ./backup
+#        target: /backup
+      - type: bind
+        source: D:/temporary/db2/backup
+        target: /backup
+    healthcheck:
+      test: ["CMD", "/opt/ibm/db2/V11.1/bin/db2gcf", "-i", "ctginst1", "-s"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   maxdmgr:
     image: maximo/maxdmgr
     hostname: maxdmgr
     ports:
-    - 9043:9043
+      - 9043:9043
     environment:
-    - DMGR_ADMIN_PASSWORD=changeit
+      - DMGR_ADMIN_PASSWORD=changeit
+      - PROFILE_NAME=ctgDmgr01
+      - CELL_NAME=ctgCell01
+      - NODE_NAME=ctgCellManager01
+      - DMGR_ADMIN_USER=wasadmin
     networks:
-    - maxnet
+      - maxnet
   maxapps:
     image: maximo/maxapps
     hostname: maxapps
     environment:
-    - DMGR_ADMIN_PASSWORD=changeit
+      - DMGR_ADMIN_PASSWORD=changeit
+      - PROFILE_NAME=ctgAppSrv01
+      - CELL_NAME=ctgNodeCell01
+      - NODE_NAME=ctgNode01
+      - DB_HOST_NAME=maxdb
+      - DMGR_HOST_NAME=maxdmgr
+      - DMGR_ADMIN_USER=wasadmin
+      - WEB_SERVER_HOST_NAME=maxweb
     depends_on:
       - maxdmgr
       - maxweb
+      - maxdb
     networks:
-    - maxnet
+      - maxnet
   maxweb:
     image: maximo/maxweb
     hostname: maxweb
     environment:
-    - DMGR_ADMIN_PASSWORD=changeit
+      - DMGR_ADMIN_PASSWORD=changeit
+      - PROFILE_NAME=ctgWebSrv01
+      - CELL_NAME=ctgNodeWSCell01
+      - NODE_NAME=ctgNodeWebSrv01
+      - DMGR_HOST_NAME=maxdmgr
+      - DMGR_ADMIN_USER=wasadmin
+      - WEB_SERVER_NAME=webserver1
     ports:
-    - 80:80
+      - 80:80
     depends_on:
       - maxdmgr
     networks:
-    - maxnet
+      - maxnet
   maximo:
     image: maximo/maximo
     hostname: maximo
     environment:
-    - DMGR_ADMIN_PASSWORD=changeit
-    - DB_MAXIMO_PASSWORD=changeit
-    - MXINTADM_PASSWORD=changeit
-    - MAXADMIN_PASSWORD=changeit
-    - MAXREG_PASSWORD=changeit
+      - DMGR_ADMIN_PASSWORD=changeit
+      - DB_MAXIMO_PASSWORD=changeit
+      - MXINTADM_PASSWORD=changeit
+      - MAXADMIN_PASSWORD=changeit
+      - MAXREG_PASSWORD=changeit
+      - BASE_LANG=en
+      - ADD_LANGS
+      - ADMIN_EMAIL_ADDRESS=root@localhost
+      - SMTP_SERVER_HOST_NAME=localhost
+      - MAXDB=MAXDB76
+      - DB_HOST_NAME=maxdb
+      - DMGR_ADMIN_USER=wasadmin
+      - DMGR_HOST_NAME=maxdmgr
+      - WAS_DM_PROFILE_NAME=ctgDmgr01
+      - WAS_DM_NODE_NAME=ctgCellManager01
+      - WAS_NODE_NAME=ctgNode01
+      - WEB_SERVER_NAME=webserver1
+      - WEB_SERVER_HOST_NAME=maxweb
+      - APP_SERVER_HOST_NAME=maxapps
+      - UPDATE_APPS_ON_REBOOT=no
     depends_on:
-     - maxdb
-     - maxapps
-     - maxweb
+      - maxdb
+      - maxapps
+      - maxweb
     networks:
-    - maxnet
+      - maxnet
 networks:
   maxnet:
 volumes:
   maxdb76:
   vardb2:
-  pae76:
