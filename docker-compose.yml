@@ -101,6 +101,7 @@ services:
       - WEB_SERVER_HOST_NAME=maxweb
       - APP_SERVER_HOST_NAME=maxapps
       - UPDATE_APPS_ON_REBOOT=no
+      - ENABLE_DEMO_DATA=no
     depends_on:
       - maxdb
       - maxapps

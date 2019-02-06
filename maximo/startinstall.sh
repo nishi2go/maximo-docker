@@ -21,6 +21,11 @@ wait-for-it.sh $DB_HOST_NAME:$DB_PORT -t 0 -q -- echo "Database is up"
 DB_FQDN=`ping $DB_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' ' | tr -d ':'`
 WAS_DM_FQDN=`ping $DMGR_HOST_NAME -c 1 | head -n 2 | tail -n 1 | cut -f 4 -d ' ' | tr -d ':'`
 
+if [[ "$ENABLE_DEMO_DATA" = "yes" ]]
+then
+  DEMO_DATA="-deployDemoData"
+fi
+
 #copy skel files
 CONFIG_FILE=/work/maximo-config.properties
 if [ -f $CONFIG_FILE ]
@@ -92,7 +97,7 @@ EOF
 
 # Run Configuration Tool
 /opt/IBM/SMP/ConfigTool/scripts/reconfigurePae.sh -action deployConfiguration \
-    -inputfile $CONFIG_FILE -automatej2eeconfig
+    -inputfile $CONFIG_FILE -automatej2eeconfig $DEMO_DATA
 
 # Fix IP address issue
 MAXIMO_PROPERTIES=/opt/IBM/SMP/maximo/applications/maximo/properties/maximo.properties
