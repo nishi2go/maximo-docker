@@ -122,7 +122,7 @@ EOS
   do
     su - ctginst1 <<- EOS
       db2start
-      db2 restore database $MAXDB from $BACKUPDIR with 32 buffers buffer 2048 replace existing parallelism 3 without prompting
+      db2 restore database $MAXDB from $BACKUPDIR with 4 buffers buffer 2048 replace existing parallelism 3 without prompting
       db2 terminate
       db2stop
 EOS
