@@ -3,7 +3,7 @@
 
 Maximo on Docker enables to run Maximo Asset Management on Docker. The images are deployed fine-grained services instead of single instance. The following instructions describe how to set up IBM Maximo Asset Management V7.6 Docker images. This images consist of several components e.g. WebSphere, Db2, and Maximo installation program.
 
-![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.png)
+![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.svg?sanitize=true)
 
 ## Required packages
 --------------------
