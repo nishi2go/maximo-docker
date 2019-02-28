@@ -1,12 +1,10 @@
 # Building and deploying an IBM Maximo Asset Management V7.6 with Feature Pack image to Docker
-------------------------------------------------------------------------------------
 
 Maximo on Docker enables to run Maximo Asset Management on Docker. The images are deployed fine-grained services instead of single instance. The following instructions describe how to set up IBM Maximo Asset Management V7.6 Docker images. This images consist of several components e.g. WebSphere, Db2, and Maximo installation program.
 
 ![Componets of Docker Images](https://raw.githubusercontent.com/nishi2go/maximo-docker/master/maximo-docker.svg?sanitize=true)
 
 ## Required packages
---------------------
 
 * IBM Maximo Asset Management V7.6.1 binaries from [Passport Advantage](http://www-01.ibm.com/software/passportadvantage/pao_customer.html)
 
@@ -44,7 +42,6 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
   * v11.1.3fp3_linuxx64_server_t.tar.gz
 
 ## Building IBM Maximo Asset Management V7.6 image by using build tool
-------------------------------------------------------
 
 Prerequisites: all binaries must be accessible via a web server during building phase.
 
@@ -92,11 +89,10 @@ Procedures:
     docker-compose up -d
     ```
     Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
-    Note: To change the default passwords, edit XYZ_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
+    Note: To change the default passwords, edit \[COMPONENT\]_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
 6. Make sure to be accessible to Maximo login page: http://hostname/maximo
 
 ## Building IBM Maximo Asset Management V7.6 image by manually
-------------------------------------------------------
 
 Prerequisites: all binaries must be accessible via a web server during building phase.
 
@@ -154,11 +150,10 @@ Procedures:
     docker-compose up -d
     ```
     Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
-    Note: To change the default passwords, edit XYZ_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
+    Note: To change the default passwords, edit \[COMPONENT\]_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
 8. Make sure to be accessible to Maximo login page: http://hostname/maximo
 
 ## Skip the maxinst process in starting up the maxdb container by using Db2 restore command
-------------------------------------------------------
 
 [Maxinst program](http://www-01.ibm.com/support/docview.wss?uid=swg21314938) supports to initialize and create a Maximo database that called during the "deployConfiguration" process in the Maximo installer. This process is painfully slow because it creates more than thousand tables from scratch. To skip the process, you can use a backup database to restore during first boot time in a maxdb service. So then, it can reduce the creation time for containers from second time.
 
