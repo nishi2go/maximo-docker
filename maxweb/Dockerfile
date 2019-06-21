@@ -15,8 +15,8 @@ FROM maximo/maxwas
 MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 
 ARG url=http://images
-ARG fp=7
-ARG javafp=5.16
+ARG fp=10
+ARG javafp=5.25
 ARG httpport=80
 
 WORKDIR /tmp
@@ -47,7 +47,7 @@ RUN wget -q ${url}/${WASND_PLG_NAME}.zip \
  && rm -rf ${WASND_JAVA_NAME}*
 
 # Install IBM HTTP Server and WebSphere Plugin V9 fix pack 7
-ENV WASFP_IHS_NAME 9.0.0-WS-IHSPLG-FP00${fp}
+ENV WASFP_IHS_NAME 9.0.0-WS-IHSPLG-FP0${fp}
 RUN wget -q ${url}/${WASFP_IHS_NAME}.zip \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl \
    -acceptLicense install com.ibm.websphere.IHS.v90 com.ibm.websphere.PLG.v90 \

@@ -18,14 +18,13 @@ function sigterm_handler {
     -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD"
 }
 
-# Wait until Deployment Manager port is opened
-wait-for-it.sh $DMGR_HOST_NAME:$DMGR_PORT -t 0 -q -- echo "Deployment Manager is up"
-
 mkdir -p /opt/IBM/WebSphere/Plugins/logs/$WEB_SERVER_NAME
 
 ## Create WebSphere Application Server profile
 PROFILE_PATH=$WAS_HOME/profiles/$PROFILE_NAME
 if [ ! -d "$PROFILE_PATH" ] ; then
+    # Wait until Deployment Manager port is opened
+    wait-for-it.sh $DMGR_HOST_NAME:$DMGR_PORT -t 0 -q -- echo "Deployment Manager is up"
     $WAS_HOME/bin/manageprofiles.sh \
           -create \
           -templatePath $WAS_HOME/profileTemplates/managed \

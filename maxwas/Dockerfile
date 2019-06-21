@@ -13,8 +13,8 @@
 FROM maximo/ibmim
 
 ARG url=http://images
-ARG fp=7
-ARG javafp=5.16
+ARG fp=10
+ARG javafp=5.25
 
 ENV TEMP /tmp
 WORKDIR /tmp
@@ -49,7 +49,7 @@ RUN wget -q ${url}/${WASND_BASE_NAME}.zip \
 ###### IBM WebSphere Application Server Network Deployment Fixpack #######
 
 # Install IBM WebSphere Application Server traditional Fixpack
-ENV WASFP_BASE_NAME 9.0.0-WS-WAS-FP00${fp}
+ENV WASFP_BASE_NAME 9.0.0-WS-WAS-FP0${fp}
 RUN wget -q ${url}/${WASFP_BASE_NAME}.zip \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl \
    -acceptLicense install com.ibm.websphere.ND.v90 \

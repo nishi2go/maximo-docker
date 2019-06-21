@@ -16,7 +16,7 @@ MAINTAINER Yasutaka Nishimura nishi2go@gmail.com
 ARG url=http://images
 
 ARG ver=11.1
-ARG fp=3fp3
+ARG fp=4fp4a
 
 ## Install required software
 RUN dpkg --add-architecture i386
@@ -44,7 +44,7 @@ VOLUME $VARDB2_DATADIR
 
 ENV CTGINST1_PASSWORD ctginst1
 ENV CTGFENC1_PASSWORD ctginst1
-ENV MAXIMO_PASSWORD maximo
+ENV DB_MAXIMO_PASSWORD maximo
 
 RUN groupadd ctggrp1
 RUN groupadd ctgfgrp1
@@ -54,7 +54,7 @@ RUN echo "ctginst1:$CTGINST1_PASSWORD" | chpasswd
 RUN useradd -g ctgfgrp1 -m -d /home/ctgfenc1 ctgfenc1
 RUN echo "ctgfenc1:$CTGFENC1_PASSWORD" | chpasswd
 RUN useradd -g maximo -m -d /home/maximo maximo
-RUN echo "maximo:$MAXIMO_PASSWORD" | chpasswd
+RUN echo "maximo:$DB_MAXIMO_PASSWORD" | chpasswd
 
 VOLUME $MAXDB_DATADIR
 

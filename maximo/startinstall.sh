@@ -36,6 +36,14 @@ then
     /opt/IBM/SMP/ConfigTool/scripts/reconfigurePae.sh -action updateApplication \
         -updatedb -deploymaximoear -enableSkin "$SKIN" -enableEnhancedNavigation
   fi
+
+  if [ "${KEEP_RUNNING}" = "yes" ]
+  then
+    sleep inf &
+    child=$!
+    wait $child
+  fi
+  
   exit
 fi
 
@@ -102,10 +110,10 @@ EOF
 # Fix IP address issue
 MAXIMO_PROPERTIES=/opt/IBM/SMP/maximo/applications/maximo/properties/maximo.properties
 URL="jdbc:db2:\/\/$DB_HOST_NAME:$DB_PORT\/$MAXDB"
-sed -ie "s/^mxe.db.url=.*/mxe.db.url=$URL/" "$MAXIMO_PROPERTIES"
+sed -i "s/^mxe.db.url=.*/mxe.db.url=$URL/" "$MAXIMO_PROPERTIES"
 
 INSTALL_PROPERTIES=/opt/IBM/SMP/etc/install.properties
-sed -ie "s/^Database.DB2.ServerHostName=.*/Database.DB2.ServerHostName=$DB_HOST_NAME/" "$INSTALL_PROPERTIES"
+sed -i "s/^Database.DB2.ServerHostName=.*/Database.DB2.ServerHostName=$DB_HOST_NAME/" "$INSTALL_PROPERTIES"
 
 # Add 80 and 443 to maximo_host
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
@@ -131,3 +139,10 @@ sleep 10
 /opt/IBM/SMP/ConfigTool/wasclient/ThinWsadmin.sh -lang jython \
     -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD" \
     -f /work/StartAllServers.py
+
+if [ "${KEEP_RUNNING}" = "yes" ]
+then
+  sleep inf &
+  child=$!
+  wait $child
+fi

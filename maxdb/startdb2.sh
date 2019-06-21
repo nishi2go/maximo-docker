@@ -35,7 +35,7 @@ fi
 # Change user passwords
 echo "ctginst1:$CTGINST1_PASSWORD" | chpasswd
 echo "ctgfenc1:$CTGFENC1_PASSWORD" | chpasswd
-echo "maximo:$MAXIMO_PASSWORD" | chpasswd
+echo "maximo:$DB_MAXIMO_PASSWORD" | chpasswd
 
 if [ ! -d "/home/ctginst1/sqllib" ]
 then

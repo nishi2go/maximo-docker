@@ -18,7 +18,7 @@ ARG fp=1
 
 ARG url=http://images
 ARG httpport=80
-ARG installfp=no
+ARG installfp=yes
 ARG skin=iot18
 
 ENV TEMP /tmp
@@ -46,8 +46,12 @@ RUN mkdir /work
 WORKDIR /work
 
 # Install Maximo V7.6.1 feature pack
+
 ENV MAM_FP_IMAGE MAMMTFP761${fp}IMRepo.zip
 RUN if [ "${installfp}" = "yes" ]; then wget -q $url/$MAM_FP_IMAGE && sleep 30 \
+ && /opt/IBM/InstallationManager/eclipse/tools/imcl install \
+ com.ibm.tivoli.tpae.base.tpae.main -repositories /work/$MAM_FP_IMAGE \
+ -installationDirectory /opt/IBM/SMP -log /tmp/FP_Install_Unix.xml -acceptLicense \
  && /opt/IBM/InstallationManager/eclipse/tools/imcl install \
  com.ibm.tivoli.tpae.base.mam.main -repositories /work/$MAM_FP_IMAGE \
  -installationDirectory /opt/IBM/SMP -log /tmp/FP_Install_Unix.xml -acceptLicense \
@@ -75,7 +79,7 @@ ENV WEB_SERVER_HOST_NAME maxweb
 ENV WEB_SERVER_PORT ${httpport}
 ENV APP_SERVER_HOST_NAME maxapps
 ENV APP_SERVER_PORT 8878
-ENV UPDATE_APPS_ON_REBOOT no
+ENV UPDATE_APPS_ON_REBOOT yes
 
 RUN wget -q https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
     && mv wait-for-it.sh /usr/local/bin && chmod +x /usr/local/bin/wait-for-it.sh

@@ -19,8 +19,6 @@ function sigterm_handler {
 }
 
 # Wait until Deployment Manager and IHS port is opened
-wait-for-it.sh $DMGR_HOST_NAME:$DMGR_PORT -t 0 -q -- echo "Deployment Manager is up"
-wait-for-it.sh $WEB_SERVER_HOST_NAME:$WEB_SERVER_PORT -t 0 -q -- echo "Web Server is up"
 wait-for-it.sh $DB_HOST_NAME:$DB_PORT -t 0 -q -- echo "Database is up"
 
 ## Create WebSphere Application Server profile
@@ -35,6 +33,8 @@ if [ ! -d "$PROFILE_PATH" ] ; then
           -cellName $CELL_NAME \
           -nodeName $NODE_NAME
 
+    wait-for-it.sh $WEB_SERVER_HOST_NAME:$WEB_SERVER_PORT -t 0 -q -- echo "Web Server is up"
+    wait-for-it.sh $DMGR_HOST_NAME:$DMGR_PORT -t 0 -q -- echo "Deployment Manager is up"
     until $WAS_HOME/profiles/$PROFILE_NAME/bin/addNode.sh $DMGR_HOST_NAME $DMGR_PORT -username "$DMGR_ADMIN_USER" -password "$DMGR_ADMIN_PASSWORD"
     do
         # Remove and create profile

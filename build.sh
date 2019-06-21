@@ -15,10 +15,12 @@
 IMAGE_DIR=$1
 CHECK_DIR=$1
 PACKAGE_LIST=packages.list
-MAXIMO_VER="${MAXIMO_VER:-7.6.1}"
+MAXIMO_VER="${MAXIMO_VER:-7.6.1.1}"
 IM_VER="${IM_VER:-1.8.8}"
-WAS_VER="${WAS_VER:-9.0.0.7}"
-DB2_VER="${DB2_VER:-11.1.3}"
+WAS_VER="${WAS_VER:-9.0.0.10}"
+DB2_VER="${DB2_VER:-11.1.4a}"
+
+DOCKER="${DOCKER_CMD:-docker}"
 
 BUILD_NETWORK_NAME="build"
 IMAGE_SERVER_NAME="images"
@@ -29,23 +31,23 @@ REMOVE=0
 
 # Usage: remove "tag name" "version" "product name"
 function remove {
-  image_id=`docker images -q --no-trunc $NAME_SPACE/$1:$2`
+  image_id=`$DOCKER images -q --no-trunc $NAME_SPACE/$1:$2`
   if [[ ! -z "$image_id" ]]; then
     echo "An old $3 image exists. Remove it."
-    container_ids=`docker ps -aq --no-trunc -f ancestor=$image_id`
+    container_ids=`$DOCKER ps -aq --no-trunc -f ancestor=$image_id`
     if [[ ! -z "$container_ids" ]]; then
-      docker rm -f $container_ids
+      $DOCKER rm -f $container_ids
     fi
-    docker rmi -f "$image_id"
+    $DOCKER rmi -f "$image_id"
   fi
 }
 
 # Usage: build "tag name" "version" "target directory name" "product name"
 function build {
   echo "Start to build $4 image"
-  docker build --rm -t $NAME_SPACE/$1:$2 -t $NAME_SPACE/$1:latest --network $BUILD_NETWORK_NAME $3
+  $DOCKER build --rm -t $NAME_SPACE/$1:$2 -t $NAME_SPACE/$1:latest --network $BUILD_NETWORK_NAME $3
 
-  exists=`docker images -q --no-trunc $NAME_SPACE/$1:$2`
+  exists=`$DOCKER images -q --no-trunc $NAME_SPACE/$1:$2`
   if [[ -z "$exists" ]]; then
     echo "Failed to create $4 image."
     exit 2
@@ -142,23 +144,23 @@ fi
 echo "Start to build..."
 
 # Create a newwork if it does not exist
-if [[ -z `docker network ls -q --no-trunc -f "name=^${BUILD_NETWORK_NAME}$"` ]]; then
+if [[ -z `$DOCKER network ls -q --no-trunc -f "name=^${BUILD_NETWORK_NAME}$"` ]]; then
   echo "Docker network build does not exist. Start to make it."
-  docker network create ${BUILD_NETWORK_NAME}
-  docker network ls -f "name=^${BUILD_NETWORK_NAME}$"
+  $DOCKER network create ${BUILD_NETWORK_NAME}
+  $DOCKER network ls -f "name=^${BUILD_NETWORK_NAME}$"
 fi
 
 # Remove and run a container for HTTP server
-images_exists=`docker ps -aq --no-trunc -f "name=^/${IMAGE_SERVER_NAME}$"`
+images_exists=`$DOCKER ps -aq --no-trunc -f "name=^/${IMAGE_SERVER_NAME}$"`
 if [[ ! -z "$images_exists" ]]; then
     echo "Docker container images has been started. Remove it."
-    docker rm -f "$images_exists"
+    $DOCKER rm -f "$images_exists"
 fi
 
 echo "Start a container - images"
-docker run --rm --name ${IMAGE_SERVER_NAME} -h ${IMAGE_SERVER_HOST_NAME} --network ${BUILD_NETWORK_NAME} \
+$DOCKER run --rm --name ${IMAGE_SERVER_NAME} -h ${IMAGE_SERVER_HOST_NAME} --network ${BUILD_NETWORK_NAME} \
  -v "$IMAGE_DIR":/usr/share/nginx/html:ro -d nginx
-docker ps -f "name=^/${IMAGE_SERVER_NAME}"
+$DOCKER ps -f "name=^/${IMAGE_SERVER_NAME}"
 
 # Build IBM Db2 Advanced Workgroup Edition image
 build "db2" "$DB2_VER" "maxdb" "IBM Db2 Advanced Workgroup Server Edition"
@@ -182,6 +184,6 @@ build "maxweb" "$WAS_VER" "maxweb" "IBM HTTP Server"
 build "maximo" "$MAXIMO_VER" "maximo" "IBM Maximo Asset Management"
 
 echo "Stop the images container."
-docker stop "${IMAGE_SERVER_NAME}"
+$DOCKER stop "${IMAGE_SERVER_NAME}"
 
 echo "Done."

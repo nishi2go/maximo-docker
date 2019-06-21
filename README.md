@@ -31,17 +31,20 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
 
 * Feature Pack/Fix Pack binaries from [Fix Central](http://www-933.ibm.com/support/fixcentral/)
 
-  IBM WebSphere Application Server traditional Fixpack V9.0.0.7 binaries:
-  * 9.0.0-WS-WAS-FP007.zip
+  IBM Maximo Asset Management V7.6.1 Feature pack 1 binaries:
+  * MAMMTFP7611IMRepo.zip
 
-  IBM HTTP Server Fixpack V9.0.0.7 binaries:
-  * 9.0.0-WS-IHSPLG-FP007.zip
+  IBM WebSphere Application Server traditional Fixpack V9.0.0.10 binaries:
+  * 9.0.0-WS-WAS-FP010.zip
 
-  IBM Java SDK Fixpack V8.0.5.16 Installation Manager Repository binaries:
-  * ibm-java-sdk-8.0-5.16-linux-x64-installmgr.zip
+  IBM HTTP Server Fixpack V9.0.0.10 binaries:
+  * 9.0.0-WS-IHSPLG-FP010.zip
 
-  IBM Db2 Server V11.1 Fix Pack 3
-  * v11.1.3fp3_linuxx64_server_t.tar.gz
+  IBM Java SDK Fixpack V8.0.5.25 Installation Manager Repository binaries:
+  * ibm-java-sdk-8.0-5.25-linux-x64-installmgr.zip
+
+  IBM Db2 Server V11.1 Fix Pack 4 Mod 1
+  * v11.1.4fp4a_linuxx64_server_t.tar.gz
 
 ## Building IBM Maximo Asset Management V7.6 image by using build tool
 ------------------------------------------------------
@@ -122,7 +125,7 @@ Procedures:
 6. Build Docker images:
     Build Db2 image:
     ```bash
-    docker build -t maximo/db2:11.1.3 -t maximo/db2:latest --network build maxdb
+    docker build -t maximo/db2:11.1.4a -t maximo/db2:latest --network build maxdb
     ```
     Build IBM Enterprise Deployment (IBM Installation Manager) image:
     ```bash
@@ -130,23 +133,23 @@ Procedures:
     ```
     Build WebSphere Application Server base image:
     ```bash
-    docker build -t maximo/maxwas:9.0.0.7 -t maximo/maxwas:latest --network build maxwas
+    docker build -t maximo/maxwas:9.0.0.10 -t maximo/maxwas:latest --network build maxwas
     ```
     Build WebSphere Application Server Deployment Manager image:
     ```bash
-    docker build -t maximo/maxdmgr:9.0.0.7 -t maximo/maxdmgr:latest maxdmgr
+    docker build -t maximo/maxdmgr:9.0.0.10 -t maximo/maxdmgr:latest maxdmgr
     ```
     Build WebSphere Application Server AppServer image:
     ```bash
-    docker build -t maximo/maxapps:9.0.0.7 -t maximo/maxapps:latest maxapps
+    docker build -t maximo/maxapps:9.0.0.10 -t maximo/maxapps:latest maxapps
     ```
     Build IBM HTTP Server image:
     ```bash
-    docker build -t maximo/maxweb:9.0.0.7 -t maximo/maxweb:latest --network build maxweb
+    docker build -t maximo/maxweb:9.0.0.10 -t maximo/maxweb:latest --network build maxweb
     ```
     Build Maximo Asset Management Installation image:
     ```bash
-    docker build -t maximo/maximo:7.6.1 -t maximo/maximo:latest --network build maximo
+    docker build -t maximo/maximo:7.6.1.1 -t maximo/maximo:latest --network build maximo
     ```
     Note: If the build has failed during Maximo Feature Pack installation, run the docker build again.
 7. Run containers by using the Docker Compose file to create and deploy new instances.
