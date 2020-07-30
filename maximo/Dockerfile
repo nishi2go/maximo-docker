@@ -14,7 +14,7 @@ FROM maximo/ibmim
 
 MAINTAINER Yasutaka Nishimura <nishi2go@gmail.com>
 
-ARG fp=1
+ARG fp=2
 
 ARG url=http://images
 ARG httpport=80
