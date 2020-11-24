@@ -23,8 +23,8 @@ DB2_VER="${DB2_VER:-11.1.4a}"
 DOCKER="${DOCKER_CMD:-docker}"
 
 BUILD_NETWORK_NAME="build"
-IMAGE_SERVER_NAME="images"
-IMAGE_SERVER_HOST_NAME="images"
+IMAGE_SERVER_NAME="maximo-images"
+IMAGE_SERVER_HOST_NAME="maximo-images"
 NAME_SPACE="maximo"
 
 REMOVE=0
@@ -45,7 +45,7 @@ function remove {
 # Usage: build "tag name" "version" "target directory name" "product name"
 function build {
   echo "Start to build $4 image"
-  $DOCKER build --rm -t $NAME_SPACE/$1:$2 -t $NAME_SPACE/$1:latest --network $BUILD_NETWORK_NAME $3
+  $DOCKER build --rm -t $NAME_SPACE/$1:$2 -t $NAME_SPACE/$1:latest --build-arg url="http://${IMAGE_SERVER_HOST_NAME}" --network $BUILD_NETWORK_NAME $3
 
   exists=`$DOCKER images -q --no-trunc $NAME_SPACE/$1:$2`
   if [[ -z "$exists" ]]; then

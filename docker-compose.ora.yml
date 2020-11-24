@@ -1,26 +1,22 @@
 version: '3.6'
 services:
   maxdb:
-    image: maximo/db2
+    image: oracle/database:18.4.0-xe
     hostname: "${DB_HOST_NAME}"
+    shm_size: 1G
     environment:
-      - MAXDB_DATADIR=/home/ctginst1/ctginst1
-      - BACKUPDIR=/backup
+      - "ORACLE_PWD=${CTGINST1_PASSWORD}"
+      - ORACLE_CHARACTERSET=AL32UTF8
     networks:
       - maxnet
     ports:
-      - 50005:50005
-    privileged: true
+      - 1521:1521
+      - 5500:5500
+      - 8080:8080
     volumes:
-      - type: volume
-        source: maxdb76
-        target: /home/ctginst1/ctginst1
-      - type: volume
-        source: vardb2
-        target: /var/db2
-#      - type: bind
-#        source: ./backup
-#        target: /backup
+      - type: bind 
+        source: ./oracle
+        target: /opt/oracle/scripts/setup
   maxdmgr:
     image: maximo/maxdmgr
     hostname: "${DMGR_HOST_NAME}"
@@ -36,6 +32,7 @@ services:
     image: maximo/maxapps
     hostname: "${APP_SERVER_HOST_NAME}"
     environment:
+      - DB_PORT=1521
       - PROFILE_NAME=ctgAppSrv01
       - CELL_NAME=ctgNodeCell01
       - NODE_NAME=ctgNode01
@@ -49,6 +46,7 @@ services:
     image: maximo/maxweb
     hostname: "${WEB_SERVER_HOST_NAME}"
     environment:
+      - DB_PORT=1521
       - PROFILE_NAME=ctgWebSrv01
       - CELL_NAME=ctgNodeWSCell01
       - NODE_NAME=ctgNodeWebSrv01
@@ -62,6 +60,9 @@ services:
     image: maximo/maximo
     hostname: maximo
     environment:
+      - DB_VENDOR=Oracle
+      - MAXDB=XEPDB1
+      - DB_PORT=1521
       - "DB_HOST_NAME=${DB_HOST_NAME}"
       - "DB_TABLE_SPACE=${DB_TABLE_SPACE}"
       - "DB_TEMP_SPACE=${DB_TEMP_SPACE}"

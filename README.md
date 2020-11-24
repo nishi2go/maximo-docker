@@ -44,7 +44,7 @@ Maximo on Docker enables to run Maximo Asset Management on Docker. The images ar
   IBM Db2 Server V11.1 Fix Pack 4 Mod 1
   * v11.1.4fp4a_linuxx64_server_t.tar.gz
 
-## Building IBM Maximo Asset Management V7.6 image by using build tool
+## Building IBM Maximo Asset Management V7.6 images by using build tool
 
 Prerequisites: all binaries must be accessible via a web server during building phase.
 
@@ -95,7 +95,7 @@ Procedures:
     Note: To change the default passwords, edit \[COMPONENT\]_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
 6. Make sure to be accessible to Maximo login page: http://hostname/maximo
 
-## Building IBM Maximo Asset Management V7.6 image by manually
+## Building IBM Maximo Asset Management V7.6 images by manually
 
 Prerequisites: all binaries must be accessible via a web server during building phase.
 
@@ -155,6 +155,48 @@ Procedures:
     Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
     Note: To change the default passwords, edit \[COMPONENT\]_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
 8. Make sure to be accessible to Maximo login page: http://hostname/maximo
+
+## Building IBM Maximo Asset Management V7.6 images with an Oracle Database Container by using build tool
+
+### Prerequisites:
+- All binaries must be accessible via a web server during building phase.
+- An Oracle Database containar or any on-premise instance must be prepared before running docker-compose command.
+  - Follow the guide from the [repo](https://github.com/oracle/docker-images/tree/master/OracleDatabase) to create an Oracle Database container.
+
+Procedures:
+1. Place the downloaded Maximo, IBM Db2, IBM Installation Manager and IBM WebSphere Application Server traditional binaries on a directory.
+2. Clone this repository.
+    ```bash
+    git clone https://github.com/nishi2go/maximo-docker.git
+    ```
+3. Move to the directory.
+    ```bash
+    cd maximo-docker
+    ```
+4. Run build tool.
+   ```bash
+   bash build.sh [Image directory] [-c] [-C] [-r]
+   ```
+
+   Example:
+   ```bash
+   bash build.sh /images -c -r
+   ```
+
+   Example for Docker for Windows:
+   ```bash
+   bash build.sh "C:/images" -c -r -d /images
+   ```
+   Note 1: This script works on Windows Subsystem on Linux.<br>
+   Note 2: md5sum is required. For Mac, install it manually - https://raamdev.com/2008/howto-install-md5sum-sha1sum-on-mac-os-x/
+5. Run containers by using the Docker Compose file to create and deploy new instances.
+    ```bash
+    docker-compose -f docker-compose.ora.yml up -d
+    ```
+    Note: It will take 3-4 hours (depend on your machine spec) to complete the installation.
+    Note: To change the default passwords, edit \[COMPONENT\]_PASSWORD environment variables in docker-compose.yml file. Do not use a different value to the same environment variable across services.
+6. Make sure to be accessible to Maximo login page: http://hostname/maximo
+
 
 ## Skip the maxinst process in starting up the maxdb container by using Db2 restore command
 
